@@ -14,7 +14,6 @@ export const getRyansHomeProduct = async () => {
       data: Array.from(productElements).map((product) => {
         const imageUrl = product.querySelector(".image-box img")?.getAttribute("src") || "";
         const title = product.querySelector(".card-body .sp-text-link")?.innerText || "";
-        const description = product.querySelector(".card-body .card-text")?.innerText?.trim()?.split("\n") || [""];
         const price = product.querySelector(".card-body .sp-text")?.innerText || product.querySelector(".card-body .pr-text")?.innerText;
         const discount = product.querySelector(".card-body .fs-text")?.innerText || "";
         const productDetailsLink = product.querySelector(".image-box a")?.getAttribute("href") || "";
@@ -22,8 +21,6 @@ export const getRyansHomeProduct = async () => {
         return {
           imageUrl,
           title,
-          description: description?.[0],
-          productId: description?.[1]?.trim(),
           price,
           discount,
           productDetailsLink,
@@ -54,8 +51,7 @@ export const getRyansSearchedProduct = async (
     return {
       data: Array.from(productElements).map((product) => {
         const imageUrl = product.querySelector(".image-box img")?.getAttribute("src") || "";
-        const title = product.querySelector(".card-body .sp-text-link")?.innerText || "";
-        const description = product.querySelector(".card-body .card-text")?.innerText?.trim()?.split("\n") || [""];
+        const title = product.querySelector(".card-body .card-text a")?.innerText?.trim()?.split("\n")?.[0] || "";
         const price = product.querySelector(".card-body .sp-text")?.innerText || product.querySelector(".card-body .pr-text")?.innerText;
         const discount = product.querySelector(".card-body .fs-text")?.innerText || "";
         const productDetailsLink = product.querySelector(".image-box a")?.getAttribute("href") || "";
@@ -63,8 +59,6 @@ export const getRyansSearchedProduct = async (
         return {
           imageUrl,
           title,
-          description: description?.[0],
-          productId: description?.[1]?.trim(),
           price,
           discount,
           productDetailsLink,
