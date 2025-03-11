@@ -7,7 +7,9 @@ export const getHomeProducts = async (_, res) => {
     const ryansHomeProducts = await getRyansHomeProduct();
     const starTechHomeProducts = await getStarTechHomeProducts();
 
-    res.status(200).json(new ApiResponse(200, { ryans: ryansHomeProducts.data, starTech: starTechHomeProducts.data }))
+    const products = [...ryansHomeProducts.data, ...starTechHomeProducts.data]
+
+    res.status(200).json(new ApiResponse(200, products))
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message })
