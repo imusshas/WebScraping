@@ -1,5 +1,5 @@
 .container {
-  margin-inline: 5rem;
+  margin: 5rem;
 }
 .search-container {
   width: 50%;
@@ -25,6 +25,7 @@
   min-height: 100%;
   box-shadow: 0 0 0.4rem #00000025;
   border-radius: 0.5rem;
+  position: relative;
 }
 
 .product-img {
@@ -52,6 +53,16 @@
 
 .discount {
   color: #008800;
+}
+
+.company {
+  position: absolute;
+  top: -0.25rem;
+  left: -0.25rem;
+  background: #008800;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
 }
 
 

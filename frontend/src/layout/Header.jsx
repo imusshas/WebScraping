@@ -1,10 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { useNavigate } from "react-router";
 
-const Header = () => {
+const Header = ({ searchKey, setSearchKey }) => {
   const navigate = useNavigate();
-  const [searchKey, setSearchKey] = useState("");
   const inputRef = useRef(null);
 
   return (
@@ -13,14 +12,16 @@ const Header = () => {
         <input
           type="text"
           value={searchKey}
+          placeholder="Search here ..."
+          id="search"
+          autoComplete="off"
           onChange={(e) => setSearchKey(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && searchKey) {
-              navigate(`/${searchKey}`);
-              setSearchKey("");
-              inputRef.current.blur();
-            }
-          }}
+          // onKeyDown={(e) => {
+          //   if (e.key === "Enter" && searchKey) {
+          //     navigate(`/${searchKey}`);
+          //     inputRef.current.blur();
+          //   }
+          // }}
           ref={inputRef}
         />
         <IoIosSearch
@@ -30,7 +31,6 @@ const Header = () => {
             e.preventDefault();
             if (searchKey) {
               navigate(`/${searchKey}`);
-              setSearchKey("");
             } else {
               inputRef.current.focus();
             }

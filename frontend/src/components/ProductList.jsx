@@ -2,16 +2,20 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Product from "./Product";
 
-const ProductList = () => {
+const ProductList = ({ searchKey }) => {
   const [productList, setProductList] = useState([]);
 
   useEffect(() => {
-    const fetchHomeProducts = async () => {
-      const products = await axios.get("http://localhost:3000/");
-      console.log(products);
+    const fetchProducts = async () => {
+      const url = searchKey ? `http://localhost:3000/${searchKey}` : "http://localhost:3000/";
+      console.log(url);
+      const products = await axios.get(url);
+      if (searchKey) {
+        console.log(products);
+      }
       setProductList(products.data.data);
     };
-    fetchHomeProducts();
+    fetchProducts();
   }, []);
 
   return (

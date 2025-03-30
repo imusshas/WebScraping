@@ -18,6 +18,6 @@ app.get("/", async (req, res) => {
   await getHomeProducts(req, res);
 })
 
-app.get("/search/:searchKey", async (req, res) => {
+app.get("/:searchKey", async (req, res) => {
   await getSearchedProducts(req, res);
 })

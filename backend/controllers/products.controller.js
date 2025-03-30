@@ -26,7 +26,9 @@ export const getSearchedProducts = async (req, res) => {
     const ryansSearchedProducts = await getRyansSearchedProduct(searchKey);
     const starTechSearchedProducts = await getStarTecSearchedProducts(searchKey);
 
-    res.status(200).json(new ApiResponse(200, { ryans: ryansSearchedProducts.data, starTech: starTechSearchedProducts.data }))
+    const products = [...ryansSearchedProducts.data, ...starTechSearchedProducts.data]
+
+    res.status(200).json(new ApiResponse(200, products))
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message })

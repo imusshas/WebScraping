@@ -29,8 +29,7 @@ header {
   width: 100%;
   max-width: 100svw;
   height: 5rem;
-  background: #ffffff80;
-  /* border-bottom: 0.0625rem solid #888; */
+  background: #fff;
   box-shadow: 0 0 0.5rem #00000025;
   display: flex;
   justify-content: center;
@@ -39,4 +38,5 @@ header {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 100;
 }

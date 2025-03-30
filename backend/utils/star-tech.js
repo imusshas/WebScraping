@@ -26,6 +26,7 @@ export const getStarTechHomeProducts = async (searchKey = "") => {
           price,
           discount,
           productDetailsLink,
+          company: "Star-Tech"
         };
       }),
     }
@@ -63,6 +64,7 @@ export const getStarTecSearchedProducts = async (searchKey = "") => {
           price,
           discount,
           productDetailsLink,
+          company: "Star-Tech"
         };
       }),
       next: `https://www.startech.com.bd/product/search?&search=keyboard&page=${currentPage + 1}`

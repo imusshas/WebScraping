@@ -1,7 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router";
-import ProductList from "./components/ProductList";
 import PageLayout from "./layout/PageLayout";
-
 import "./App.css";
 
 function App() {
@@ -9,8 +7,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<PageLayout />}>
-          <Route path="/" element={<ProductList />} />
-          <Route path="/:searchKey" element={<ProductList />} />
+          <Route path="/" element={<PageLayout />} />
+          <Route path="/:searchKey" element={<PageLayout />} />
         </Route>
       </Routes>
     </BrowserRouter>

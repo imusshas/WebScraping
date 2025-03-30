@@ -1,8 +1,9 @@
 import { Link } from "react-router";
 
-const Product = ({ imageUrl, title, price, discount, productDetailsLink }) => {
+const Product = ({ imageUrl, title, price, discount, productDetailsLink, company }) => {
   return (
     <article className="product">
+      <span className="company">{company}</span>
       <Link to={productDetailsLink} target="_blank">
         <img src={imageUrl} alt={title} className="product-img" />
       </Link>

@@ -24,6 +24,7 @@ export const getRyansHomeProduct = async () => {
           price,
           discount,
           productDetailsLink,
+          company: "Ryans"
         };
       }),
     }
@@ -62,6 +63,7 @@ export const getRyansSearchedProduct = async (
           price,
           discount,
           productDetailsLink,
+          company: "Ryans"
         };
       }),
       next: `https://www.ryans.com/search?q=Keyboard&limit=30&page=${currentPage + 1}`
