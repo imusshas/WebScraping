@@ -68,6 +68,22 @@ body.no-scroll {
   margin-inline: 5rem;
 }
 
+.products-container {
+  margin-top: 10rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sort-btn {
+  align-self: flex-end;
+  background: oklch(64.6% 0.222 41.116);
+}
+
+.sort-btn:hover {
+  outline: none;
+}
+
 .search-container {
   width: 50%;
   position: absolute;
@@ -87,7 +103,6 @@ body.no-scroll {
 
 .product-list {
   max-width: 100vw;
-  margin-top: 10rem;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
@@ -98,14 +113,11 @@ body.no-scroll {
   border: 0.1rem solid #00000015;
   border-radius: 0.5rem;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .product-img {
   width: 100%;
-  aspect-ratio: 1;
+  height: 20rem;
   text-align: center;
   padding: 0.5rem;
   border-bottom: 0.1rem solid #00000015;
@@ -120,16 +132,24 @@ body.no-scroll {
 
 .title {
   font-size: 1;
-  max-lines: 1;
   color: #333;
+
+  display: -webkit-box;
+  line-clamp: 1; /* Standard property for compatibility */
+  -webkit-line-clamp: 1; /* Limit to 1 line */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .price {
   font-size: 1.25rem;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .discount {
+  font-weight: normal;
+  font-size: 0.75rem;
   color: #008800;
 }
 

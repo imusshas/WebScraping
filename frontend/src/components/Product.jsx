@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { Button } from "./ui/Button";
 
 const Product = ({ imageUrl, title, price, discount, productDetailsLink, company }) => {
   return (
@@ -9,8 +10,12 @@ const Product = ({ imageUrl, title, price, discount, productDetailsLink, company
       </Link>
       <div className="product-content">
         <h2 className="title">{title}</h2>
-        <p className="price">{price}</p>
-        {discount && <p className="discount">{discount}</p>}
+        <p className="price">
+          {price}
+          {Number(price) ? "৳" : ""}&nbsp;&nbsp;
+          {discount && <span className="discount">{`${discount}`}</span>}
+        </p>
+        {/* <Button>Add To Compare</Button> */}
       </div>
     </article>
   );
