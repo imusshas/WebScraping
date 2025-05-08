@@ -3,7 +3,7 @@ export function parsePrice(value) {
 
   // Remove non-numeric characters (keep digits and dots only)
   const cleaned = value.replace(/[^\d.]/g, "");
-  const number = parseFloat(cleaned);
+  const price = parseFloat(cleaned);
 
-  return isNaN(number) ? "Out of Stock" : number;
+  return isNaN(price) || price === 0 ? "Out of Stock" : price;
 }

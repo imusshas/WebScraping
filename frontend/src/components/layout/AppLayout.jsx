@@ -22,7 +22,9 @@ const AppLayout = () => {
     <main>
       <Header setShowLogin={setShowLogin} currentUser={currentUser} setCurrentUser={setCurrentUser} />
       <Login isOpen={showLogin} onClose={() => setShowLogin(false)} setCurrentUser={setCurrentUser} />
-      <Outlet />
+      <div className="container">
+        <Outlet />
+      </div>
     </main>
   );
 };

@@ -6,7 +6,9 @@ const Product = ({ imageUrl, title, price, discount, productDetailsLink, company
     <article className="product">
       <span className="company">{company}</span>
       <Link to={productDetailsLink} target="_blank">
-        <img src={imageUrl} alt={title} className="product-img" />
+        <div className="product-image-container">
+          <img src={imageUrl} alt={title} className="product-img" />
+        </div>
       </Link>
       <div className="product-content">
         <h2 className="title">{title}</h2>
