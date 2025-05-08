@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getCurrentUser } from "../../utils/actions";
 import Header from "./Header";
 import { Login } from "../Login";
+import Footer from "./Footer";
 
 const AppLayout = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -25,6 +26,7 @@ const AppLayout = () => {
       <div className="container">
         <Outlet />
       </div>
+      <Footer />
     </main>
   );
 };
