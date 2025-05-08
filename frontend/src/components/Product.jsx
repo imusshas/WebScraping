@@ -18,7 +18,7 @@ const Product = ({ imageUrl, title, price, discount, productDetailsLink, company
               {price}
               {Number(price) ? "৳" : ""}
             </p>
-            {discount && <p className="discount">{`${discount}`}</p>}
+            {discount && price != "Out Of Stock" && <p className="discount">{`${discount}`}</p>}
           </div>
           {/* <Button>Add To Compare</Button> */}
         </div>

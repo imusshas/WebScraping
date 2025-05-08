@@ -4,7 +4,6 @@ import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import Product from "./Product";
 import { Button } from "../components/ui/Button";
-import emptyBox from "../../public/empty-box.jpg";
 
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -66,7 +65,7 @@ const ProductList = () => {
         </>
       ) : productList.length === 0 ? (
         <>
-          <img src={emptyBox} alt="no products left" className="empty-product-img" />
+          <img src={"/empty-box.jpg"} alt="no products left" className="empty-product-img" />
           <div className="pagination">
             <Button
               onClick={() => navigate(`/`)}
