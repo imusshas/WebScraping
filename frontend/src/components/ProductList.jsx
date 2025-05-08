@@ -4,7 +4,6 @@ import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import Product from "./Product";
 import { Button } from "../components/ui/Button";
-import { EmptyProduct } from "./ui/EmptyProduct";
 import emptyBox from "../../public/empty-box.jpg";
 
 import "react-loading-skeleton/dist/skeleton.css";
