@@ -1,15 +1,15 @@
 import puppeteer from "puppeteer";
 import { parsePrice } from "./converter.js";
 
-export const getStarTecSearchedProducts = async (searchKey = "") => {
+export const getStarTecSearchedProducts = async (searchKey = "", currentPage = 1) => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
-  const url = `https://www.startech.com.bd/product/search?search=${searchKey}`;
+  const url = `https://www.startech.com.bd/product/search?search=${searchKey}&page=${currentPage}`;
   await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
 
 
-  const products = await page.evaluate(() => {
+  const products = await page.evaluate((searchKey) => {
     const productElements = document.querySelectorAll(".p-item-inner");
     const currentPage = parseInt(document.querySelector(".pagination")?.querySelector(".active")?.innerText || 0);
 
@@ -31,9 +31,9 @@ export const getStarTecSearchedProducts = async (searchKey = "") => {
           company: "Star-Tech"
         };
       }),
-      next: `https://www.startech.com.bd/product/search?&search=keyboard&page=${currentPage + 1}`
+      next: `https://www.startech.com.bd/product/search?&search=${searchKey}&page=${currentPage + 1}`
     }
-  });
+  }, searchKey);
 
 
   await browser.close();

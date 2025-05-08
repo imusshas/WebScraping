@@ -18,7 +18,7 @@ export const Home = () => {
           onChange={(e) => setSearchKey(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && searchKey) {
-              navigate(`/${searchKey}`);
+              navigate(`/${searchKey}/1`);
               inputRef.current.blur();
             }
           }}
@@ -32,7 +32,7 @@ export const Home = () => {
           fill="none"
           onClick={() => {
             if (searchKey) {
-              navigate(`/${searchKey}`);
+              navigate(`/${searchKey}/1`);
               inputRef.current.blur();
             }
           }}

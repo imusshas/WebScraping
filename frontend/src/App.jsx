@@ -13,7 +13,7 @@ function App() {
         <Route path="/" element={<AppLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/:searchKey" element={<ProductList />} />
+          <Route path="/:searchKey/:currentPage" element={<ProductList />} />
         </Route>
         <Route path="*" replace="/" />
       </Routes>

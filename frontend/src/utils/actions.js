@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export async function getProducts(searchKey) {
-  const response = await axios.get(`http://localhost:3000/products/${searchKey}`);
+export async function fetchProducts(searchKey, currentPage) {
+  const response = await axios.get(`http://localhost:3000/products/${searchKey}/${currentPage}`);
   return response.data.data;
 }
 

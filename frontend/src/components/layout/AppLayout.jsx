@@ -12,7 +12,6 @@ const AppLayout = () => {
   useEffect(() => {
     async function getUser() {
       const user = await getCurrentUser();
-      console.log("AppLayout:", user);
       setCurrentUser(user);
     }
 
