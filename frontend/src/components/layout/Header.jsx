@@ -1,11 +1,10 @@
 import { Link } from "react-router";
 import { Button } from "../ui/Button";
 import { logout } from "../../utils/actions";
-import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 
-const Header = ({ setShowLogin, currentUser, setCurrentUser }) => {
-  const { getItem, removeItem } = useLocalStorage("user");
+const Header = ({ setShowLogin, currentUser, setCurrentUser, getItem, removeItem }) => {
+  
 
   async function handleLogout() {
     await logout();

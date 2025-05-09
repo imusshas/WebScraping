@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 
-export const Home = () => {
+const Home = () => {
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const [searchKey, setSearchKey] = useState("");
@@ -50,3 +50,5 @@ export const Home = () => {
     </div>
   );
 };
+
+export default Home;
