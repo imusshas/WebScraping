@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "./ui/Button";
 import { login } from "../utils/actions";
-import { useUserStorage } from "../hooks/useUserStorage";
+import { useUserStorage } from "../hooks/useLocalStorage";
 
 export const Login = ({ isOpen, onClose, setCurrentUser }) => {
   const { setUser } = useUserStorage();

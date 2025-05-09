@@ -2,7 +2,6 @@ import { Link } from "react-router";
 import { Button } from "../ui/Button";
 import { logout } from "../../utils/actions";
 
-
 const Header = ({ setShowLogin, currentUser, setCurrentUser, getUser, removeUser }) => {
   async function handleLogout() {
     await logout();
@@ -18,6 +17,35 @@ const Header = ({ setShowLogin, currentUser, setCurrentUser, getUser, removeUser
         </Link>
       </h1>
       <nav>
+        <Link to={"/compare-products"}>
+          <svg
+            height="1.5rem"
+            width="1.5rem"
+            version="1.1"
+            id="Layer_1"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+            viewBox="0 0 511.998 511.998"
+            xmlSpace="preserve"
+            stroke="#000000"
+            strokeWidth="1.5"
+          >
+            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <g>
+                <path
+                  // fill="#000000;"
+                  d="M123.182,272.455c4.453,4.453,10.404,6.819,16.461,6.819c2.998,0,6.021-0.58,8.899-1.773 c8.696-3.601,14.367-12.088,14.367-21.501v-93.09h325.816c12.853,0,23.273-10.42,23.273-23.273 c0-12.853-10.42-23.273-23.273-23.273H162.91v-93.09c0-9.411-5.669-17.898-14.367-21.501c-8.696-3.604-18.708-1.612-25.361,5.044 L6.819,123.18c-9.089,9.089-9.089,23.823,0,32.912L123.182,272.455z"
+                ></path>
+                <path
+                  // fill="#000000;"
+                  d="M388.818,239.543c-6.656-6.658-16.666-8.648-25.362-5.046c-8.696,3.603-14.367,12.089-14.367,21.501 v93.09H23.273C10.42,349.089,0,359.509,0,372.361c0,12.853,10.42,23.273,23.273,23.273h325.816v93.09 c0,9.413,5.669,17.9,14.367,21.501c2.878,1.193,5.903,1.773,8.899,1.773c6.057,0,12.01-2.364,16.461-6.819L505.18,388.817 c9.089-9.087,9.089-23.822,0-32.912L388.818,239.543z"
+                ></path>
+              </g>
+            </g>
+          </svg>
+        </Link>
         <Link to={"/wishlist"}>
           <svg
             xmlns="http://www.w3.org/2000/svg"

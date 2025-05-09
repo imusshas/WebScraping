@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Header from "./Header";
 import { Login } from "../Login";
 import Footer from "./Footer";
-import { useUserStorage } from "../../hooks/useUserStorage";
+import { useUserStorage } from "../../hooks/useLocalStorage";
 
 const AppLayout = () => {
   const { getUser, removeUser } = useUserStorage();
