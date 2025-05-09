@@ -3,20 +3,26 @@ import { useEffect, useState } from "react";
 import Header from "./Header";
 import { Login } from "../Login";
 import Footer from "./Footer";
-import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { useUserStorage } from "../../hooks/useUserStorage";
 
 const AppLayout = () => {
-  const { getItem, removeItem } = useLocalStorage("user");
+  const { getUser, removeUser } = useUserStorage();
   const [showLogin, setShowLogin] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    setCurrentUser(getItem());
+    setCurrentUser(getUser());
   }, []);
 
   return (
     <main>
-      <Header setShowLogin={setShowLogin} currentUser={currentUser} setCurrentUser={setCurrentUser} getItem={getItem} removeItem={removeItem} />
+      <Header
+        setShowLogin={setShowLogin}
+        currentUser={currentUser}
+        setCurrentUser={setCurrentUser}
+        getUser={getUser}
+        removeUser={() => removeUser(currentUser.email)}
+      />
       <Login isOpen={showLogin} onClose={() => setShowLogin(false)} setCurrentUser={setCurrentUser} />
       <div className="container">
         <Outlet />

@@ -18,7 +18,7 @@ const Home = () => {
           onChange={(e) => setSearchKey(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && searchKey) {
-              navigate(`/${searchKey}/1`);
+              navigate(`/products/${searchKey}/1`);
               inputRef.current.blur();
             }
           }}
@@ -32,7 +32,7 @@ const Home = () => {
           fill="none"
           onClick={() => {
             if (searchKey) {
-              navigate(`/${searchKey}/1`);
+              navigate(`/products/${searchKey}/1`);
               inputRef.current.blur();
             }
           }}

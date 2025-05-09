@@ -1,31 +1,26 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import Product from "./Product";
 import { Button } from "../components/ui/Button";
 
 import "react-loading-skeleton/dist/skeleton.css";
+import { fetchProducts } from "../utils/actions";
 
 const ProductList = () => {
   const navigate = useNavigate();
   const [productList, setProductList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [sortAsc, setSortAsc] = useState(true);
   const sortButtonText = sortAsc ? "Low To High" : "High To Low";
 
   const { searchKey, currentPage } = useParams();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      const url = `http://localhost:3000/products/${searchKey}/${currentPage}`;
-      const products = await axios.get(url);
-      setProductList(products.data.data.products);
+    fetchProducts(searchKey, currentPage).then((products) => {
+      setProductList(products);
       setLoading(false);
-    };
-
-    fetchProducts();
+    });
   }, [searchKey, currentPage]);
 
   const sortedProducts = useMemo(() => {
@@ -67,11 +62,7 @@ const ProductList = () => {
         <>
           <img src={"/empty-box.jpg"} alt="no products left" className="empty-product-img" />
           <div className="pagination">
-            <Button
-              onClick={() => navigate(`/`)}
-            >
-              Go Home
-            </Button>
+            <Button onClick={() => navigate(`/`)}>Go Home</Button>
           </div>
         </>
       ) : (
@@ -95,13 +86,19 @@ const ProductList = () => {
           </section>
           <div className="pagination">
             <Button
-              onClick={() => navigate(`/${searchKey}/${Number(currentPage) - 1}`)}
+              onClick={() => {
+                setLoading(true);
+                navigate(`/products/${searchKey}/${Number(currentPage) - 1}`);
+              }}
               disabled={Number(currentPage) - 1 < 1}
             >
               Previous
             </Button>
             <Button
-              onClick={() => navigate(`/${searchKey}/${Number(currentPage) + 1}`)}
+              onClick={() => {
+                setLoading(true);
+                navigate(`/products/${searchKey}/${Number(currentPage) + 1}`);
+              }}
               disabled={productList.length === 0}
             >
               Next

@@ -1,12 +1,12 @@
 import { Link } from "react-router";
 import { Button } from "./ui/Button";
 
-const Product = ({ imageUrl, title, price, discount, productDetailsLink, company }) => {
+const Product = ({ imageUrl, title, price, discount, company, productDetailsLink }) => {
   return (
     <article className="product">
       <span className="company">{company}</span>
       <div className="product-img-container">
-        <Link to={productDetailsLink} target="_blank">
+        <Link to={`/product-details/${productDetailsLink.split("/").pop()}`} target="_blank">
           <img src={imageUrl} alt={title} className="product-img" />
         </Link>
       </div>

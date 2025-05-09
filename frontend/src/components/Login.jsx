@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Button } from "./ui/Button";
 import { login } from "../utils/actions";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useUserStorage } from "../hooks/useUserStorage";
 
 export const Login = ({ isOpen, onClose, setCurrentUser }) => {
-  const { setItem } = useLocalStorage("user");
+  const { setUser } = useUserStorage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,7 @@ export const Login = ({ isOpen, onClose, setCurrentUser }) => {
     console.log("handleSubmit", data);
     setLoading(false);
     if (data.user.email) {
-      setItem(data.user);
+      setUser(data.user);
       setCurrentUser(data.user);
       onClose();
     }

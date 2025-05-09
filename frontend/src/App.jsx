@@ -12,10 +12,10 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AppLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/:searchKey/:currentPage" element={<ProductList />} />
+          <Route index element={<Home />} />
+          <Route path="/products/:searchKey/:currentPage" element={<ProductList />} />
           <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/:productId" element={<ProductDetails />} />
+          <Route path="/product-details/:productId" element={<ProductDetails />} />
         </Route>
         <Route path="*" replace="/" />
       </Routes>
