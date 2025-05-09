@@ -2,8 +2,10 @@ import { useCompareStorage } from "../hooks/useCompareStorage";
 import { Button } from "./ui/Button";
 import { comparisonTable } from "../utils/comparisonTable";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 const CompareProducts = () => {
+  const navigate = useNavigate();
   const { getProducts, removeProduct, clearAll } = useCompareStorage();
   const [products, setProducts] = useState([]);
   const comparableAttributes = comparisonTable(products);
@@ -12,7 +14,15 @@ const CompareProducts = () => {
     setProducts(getProducts());
   }, []);
 
-  if (products.length === 0) return null;
+  if (products.length === 0)
+    return (
+      <div className="products-container">
+        <img src="/product-comparison.jpg" alt="Compare Products" className="empty-product-img" />
+        <div className="pagination">
+          <Button onClick={() => navigate(`/`)}>Go Home</Button>
+        </div>
+      </div>
+    );
 
   return (
     <div>
