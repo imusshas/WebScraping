@@ -3,10 +3,12 @@ import { Button } from "./ui/Button";
 import { comparisonTable } from "../utils/comparisonTable";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useCompare } from "../context/CompareContext";
 
 const CompareProducts = () => {
   const navigate = useNavigate();
   const { getProducts, removeProduct, clearAll } = useCompareStorage();
+  const { updateCompareCount } = useCompare();
   const [products, setProducts] = useState([]);
   const comparableAttributes = comparisonTable(products);
 
@@ -36,6 +38,7 @@ const CompareProducts = () => {
                   onClick={() => {
                     clearAll();
                     setProducts([]);
+                    updateCompareCount();
                   }}
                 >
                   Clear All
@@ -53,6 +56,7 @@ const CompareProducts = () => {
                     onClick={() => {
                       removeProduct(`${product.company}${product.productId}`);
                       setProducts(getProducts());
+                      updateCompareCount();
                     }}
                   >
                     <svg

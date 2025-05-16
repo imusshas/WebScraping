@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useOutletContext } from "react-router";
 import { useCompareStorage } from "../hooks/useCompareStorage";
-import { fetchProductDetails } from "../utils/actions";
+import { fetchProductDetails, addToWishlist } from "../utils/actions";
 import { Button } from "../components/ui/Button";
 import { Ratings } from "./Ratings";
+import { useUserStorage } from "../hooks/useLocalStorage";
+import { useWishlist } from "../context/WishlistContext";
+import { useCompare } from "../context/CompareContext";
 
 const ProductDetails = () => {
+  const { setShowLogin } = useOutletContext();
+  const { getUser } = useUserStorage();
   const { addProduct } = useCompareStorage();
+  const { updateWishlistCount } = useWishlist();
+  const { updateCompareCount } = useCompare();
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
 
   useEffect(() => {
     fetchProductDetails(productId).then(setProduct);
@@ -48,8 +56,32 @@ const ProductDetails = () => {
             </p>
           </div>
           <div className="product-info-buttons">
-            <Button>Add To Wishlist</Button>
-            <Button onClick={() => addProduct(product, `${product.company}${product.productId}`)}>
+            <Button
+              onClick={async () => {
+                const user = getUser();
+                if (!user) {
+                  setShowLogin(true);
+                  return;
+                }
+                setIsAddingToWishlist(true);
+                try {
+                  await addToWishlist(productId, product.specialPrice || product.regularPrice, user.email);
+                  updateWishlistCount();
+                } catch (error) {
+                  alert(error.response?.data?.message || "Failed to add to wishlist");
+                }
+                setIsAddingToWishlist(false);
+              }}
+              disabled={isAddingToWishlist}
+            >
+              {isAddingToWishlist ? "Adding..." : "Add To Wishlist"}
+            </Button>
+            <Button
+              onClick={() => {
+                addProduct(product, `${product.company}${product.productId}`);
+                updateCompareCount();
+              }}
+            >
               Add To Compare
             </Button>
           </div>

@@ -12,7 +12,7 @@ const AppLayout = () => {
 
   useEffect(() => {
     setCurrentUser(getUser());
-  }, []);
+  }, [getUser]);
 
   return (
     <main>
@@ -25,7 +25,7 @@ const AppLayout = () => {
       />
       <Login isOpen={showLogin} onClose={() => setShowLogin(false)} setCurrentUser={setCurrentUser} />
       <div className="container">
-        <Outlet />
+        <Outlet context={{ setShowLogin }} />
       </div>
       <Footer />
     </main>

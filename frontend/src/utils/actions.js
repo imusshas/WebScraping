@@ -26,3 +26,25 @@ export async function logout() {
   const response = await axios.get(`http://localhost:3000/auth/logout`, { withCredentials: true });
   return response.data.data;
 }
+
+export async function addToWishlist(productDetailsLink, price, email) {
+  const response = await axios.post(
+    `http://localhost:3000/wishlist/add`,
+    { productDetailsLink, price, email },
+    { withCredentials: true }
+  );
+  return response.data.data;
+}
+
+export async function getWishlist(email) {
+  const response = await axios.get(`http://localhost:3000/wishlist/${email}`, { withCredentials: true });
+  return response.data.data;
+}
+
+export async function removeFromWishlist(email, productDetailsLink) {
+  const response = await axios.delete(
+    `http://localhost:3000/wishlist/${email}/${encodeURIComponent(productDetailsLink)}`,
+    { withCredentials: true }
+  );
+  return response.data.data;
+}

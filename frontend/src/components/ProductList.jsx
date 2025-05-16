@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useOutletContext } from "react-router";
 import Skeleton from "react-loading-skeleton";
 import Product from "./Product";
 import { Button } from "../components/ui/Button";
@@ -8,6 +8,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { fetchProducts } from "../utils/actions";
 
 const ProductList = () => {
+  const { setShowLogin } = useOutletContext();
   const navigate = useNavigate();
   const [productList, setProductList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,7 +82,7 @@ const ProductList = () => {
           </Button>
           <section className="product-list">
             {sortedProducts?.map((product) => (
-              <Product key={product.productDetailsLink} {...product} />
+              <Product key={product.productDetailsLink} {...product} setShowLogin={setShowLogin} />
             ))}
           </section>
           <div className="pagination">
