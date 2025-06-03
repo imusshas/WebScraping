@@ -1,10 +1,13 @@
+// .useCompareStorage.js
+
+import { useCallback } from "react";
+
 export const useCompareStorage = () => {
   const key = "compare";
 
-  const addProduct = (product, uniqueKey) => {
+  const addProduct = useCallback((product, uniqueKey) => {
     try {
       const existing = JSON.parse(window.localStorage.getItem(key)) || [];
-
       const alreadyExists = existing.some(item => item.key === uniqueKey);
       if (alreadyExists) return;
 
@@ -13,9 +16,9 @@ export const useCompareStorage = () => {
     } catch (error) {
       console.error("useCompareStorage: addProduct:", error);
     }
-  };
+  }, []);
 
-  const getProducts = () => {
+  const getProducts = useCallback(() => {
     try {
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : [];
@@ -23,9 +26,9 @@ export const useCompareStorage = () => {
       console.error("useCompareStorage: getProducts:", error);
       return [];
     }
-  };
+  }, []);
 
-  const removeProduct = (uniqueKey) => {
+  const removeProduct = useCallback((uniqueKey) => {
     try {
       const existing = JSON.parse(window.localStorage.getItem(key)) || [];
       const filtered = existing.filter(item => item.key !== uniqueKey);
@@ -33,15 +36,15 @@ export const useCompareStorage = () => {
     } catch (error) {
       console.error("useCompareStorage: removeProduct:", error);
     }
-  };
+  }, []);
 
-  const clearAll = () => {
+  const clearAll = useCallback(() => {
     try {
       window.localStorage.removeItem(key);
     } catch (error) {
       console.error("useCompareStorage: clearAll:", error);
     }
-  };
+  }, []);
 
   return { addProduct, getProducts, removeProduct, clearAll };
 };

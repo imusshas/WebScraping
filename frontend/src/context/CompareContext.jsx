@@ -1,3 +1,5 @@
+// CompareContext.jsx
+
 import { createContext, useContext, useState, useEffect } from "react";
 import { useCompareStorage } from "../hooks/useCompareStorage";
 
