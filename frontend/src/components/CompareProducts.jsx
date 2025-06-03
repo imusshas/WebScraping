@@ -14,7 +14,7 @@ const CompareProducts = () => {
 
   useEffect(() => {
     setProducts(getProducts());
-  }, []);
+  }, [getProducts]);
 
   if (products.length === 0)
     return (
