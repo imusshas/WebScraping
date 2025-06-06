@@ -1,3 +1,5 @@
+// frontend/src/components/ProductDetails.jsx
+
 import { useEffect, useState } from "react";
 import { useParams, useOutletContext } from "react-router";
 import { useCompareStorage } from "../hooks/useCompareStorage";
@@ -17,12 +19,47 @@ const ProductDetails = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+  const [isAddingToCompare, setIsAddingToCompare] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     fetchProductDetails(productId).then(setProduct);
+    setIsLoading(false);
   }, [productId]);
 
-  if (!product) return null;
+  const handleAddToWishlist = async () => {
+    const user = getUser();
+    if (!user) {
+      setShowLogin(true);
+      return;
+    }
+    setIsAddingToWishlist(true);
+    try {
+      await addToWishlist(productId, product.regularPrice || product.specialPrice, product.company, user.email);
+      updateWishlistCount();
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to add to wishlist");
+    }
+    setIsAddingToWishlist(false);
+  };
+
+  const handleAddToCompare = async () => {
+    setIsAddingToCompare(true);
+    try {
+      addProduct(product, `${product.company}${productId}`);
+      updateCompareCount();
+    } catch (error) {
+      console.error("Error adding to compare:", error);
+    }
+    setIsAddingToCompare(false);
+  };
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!product) return <p>Loading...</p>;
 
   return (
     <div className="product-details-container">
@@ -56,33 +93,11 @@ const ProductDetails = () => {
             </p>
           </div>
           <div className="product-info-buttons">
-            <Button
-              onClick={async () => {
-                const user = getUser();
-                if (!user) {
-                  setShowLogin(true);
-                  return;
-                }
-                setIsAddingToWishlist(true);
-                try {
-                  await addToWishlist(productId, product.specialPrice || product.regularPrice, user.email);
-                  updateWishlistCount();
-                } catch (error) {
-                  alert(error.response?.data?.message || "Failed to add to wishlist");
-                }
-                setIsAddingToWishlist(false);
-              }}
-              disabled={isAddingToWishlist}
-            >
+            <Button onClick={handleAddToWishlist} disabled={isAddingToWishlist || product.price === "Out Of Stock"}>
               {isAddingToWishlist ? "Adding..." : "Add To Wishlist"}
             </Button>
-            <Button
-              onClick={() => {
-                addProduct(product, `${product.company}${product.productId}`);
-                updateCompareCount();
-              }}
-            >
-              Add To Compare
+            <Button onClick={handleAddToCompare} disabled={isAddingToCompare || product.price === "Out Of Stock"}>
+              {isAddingToCompare ? "Adding..." : "Add To Compare"}
             </Button>
           </div>
         </div>

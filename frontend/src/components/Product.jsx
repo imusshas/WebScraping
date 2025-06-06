@@ -1,10 +1,12 @@
+// frontend/src/components/Product.jsx
+
 import { Link } from "react-router";
 import { Button } from "./ui/Button";
 import { useUserStorage } from "../hooks/useLocalStorage";
 import { useWishlist } from "../context/WishlistContext";
 import { useCompare } from "../context/CompareContext";
 import { useCompareStorage } from "../hooks/useCompareStorage";
-import { addToWishlist } from "../utils/actions";
+import { addToWishlist, fetchProductDetails } from "../utils/actions";
 import { useState } from "react";
 
 const Product = ({ imageUrl, title, price, discount, company, productDetailsLink, setShowLogin }) => {
@@ -14,6 +16,7 @@ const Product = ({ imageUrl, title, price, discount, company, productDetailsLink
   const { addProduct } = useCompareStorage();
   const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
   const [isAddingToCompare, setIsAddingToCompare] = useState(false);
+  const productId = productDetailsLink.split("/").pop();
 
   const handleAddToWishlist = async () => {
     const user = getUser();
@@ -23,7 +26,7 @@ const Product = ({ imageUrl, title, price, discount, company, productDetailsLink
     }
     setIsAddingToWishlist(true);
     try {
-      await addToWishlist(productDetailsLink.split("/").pop(), price, user.email);
+      await addToWishlist(productId, price, company, user.email);
       updateWishlistCount();
     } catch (error) {
       alert(error.response?.data?.message || "Failed to add to wishlist");
@@ -31,19 +34,11 @@ const Product = ({ imageUrl, title, price, discount, company, productDetailsLink
     setIsAddingToWishlist(false);
   };
 
-  const handleAddToCompare = () => {
+  const handleAddToCompare = async () => {
     setIsAddingToCompare(true);
     try {
-      addProduct(
-        {
-          productId: productDetailsLink.split("/").pop(),
-          company,
-          title,
-          imageUrls: [imageUrl],
-          attributes: {},
-        },
-        `${company}${productDetailsLink.split("/").pop()}`,
-      );
+      const product = await fetchProductDetails(productId);
+      addProduct(product, `${company}${productDetailsLink.split("/").pop()}`);
       updateCompareCount();
     } catch (error) {
       console.error("Error adding to compare:", error);

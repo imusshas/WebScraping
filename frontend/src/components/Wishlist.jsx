@@ -1,3 +1,5 @@
+// frontend/src/components/Wishlist.jsx
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "./ui/Button";
@@ -12,15 +14,10 @@ const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState({});
+  const user = getUser();
 
   useEffect(() => {
     const fetchData = async () => {
-      const user = getUser();
-      if (!user) {
-        navigate("/");
-        return;
-      }
-
       try {
         const items = await getWishlist(user.email);
         setWishlistItems(items);
@@ -40,7 +37,12 @@ const Wishlist = () => {
     };
 
     fetchData();
-  }, [getUser, navigate]);
+  }, [user?.email]);
+
+  if (!user) {
+    navigate("/");
+    return;
+  }
 
   const handleRemoveFromWishlist = async (productDetailsLink) => {
     const user = getUser();

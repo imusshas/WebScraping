@@ -1,3 +1,5 @@
+// frontend/src/utils/actions.jsx
+
 import axios from "axios";
 
 export async function fetchProducts(searchKey, currentPage) {
@@ -27,10 +29,10 @@ export async function logout() {
   return response.data.data;
 }
 
-export async function addToWishlist(productDetailsLink, price, email) {
+export async function addToWishlist(productDetailsLink, price, company, email) {
   const response = await axios.post(
     `http://localhost:3000/wishlist/add`,
-    { productDetailsLink, price, email },
+    { productDetailsLink, price, company, email },
     { withCredentials: true }
   );
   return response.data.data;
