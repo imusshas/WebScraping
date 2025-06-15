@@ -153,19 +153,12 @@ body.no-scroll {
   overflow: hidden;
 }
 
-.product:hover .product-img,
-.product-img-container:hover img {
-  transform: scale(1.15);
-}
 
 .product-img-container {
   width: 100%;
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   cursor: pointer;
 }
 
@@ -209,15 +202,17 @@ img {
 }
 
 .company {
-  background: oklch(39.8% 0.195 277.366);
-  color: #fff;
+  color: #4f46e5;
   font-size: 0.75rem;
-  position: absolute;
-  top: -0.2rem;
-  left: -0.2rem;
-  padding: 0.25rem;
-  border-radius: 0.25rem;
-  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 0.5rem;
+}
+
+.company img {
+  height: 1.5rem;
+  width: 2.5rem;
 }
 
 .pagination {
@@ -390,21 +385,23 @@ img {
 .compared-product {
   margin-top: 2rem;
   border-radius: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  gap: 1rem;
   cursor: pointer;
   overflow: hidden;
-}
-
-.compared-product:hover .compared-product-img {
-  transform: scale(1.15);
 }
 
 .compared-product-img {
   width: 90%;
   aspect-ratio: 1;
+}
+.compared-product-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 1rem;
+}
+
+.special-price {
+  color: #008800;
 }
 
 .comparison-table td {

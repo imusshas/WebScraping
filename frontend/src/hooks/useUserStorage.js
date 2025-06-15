@@ -1,34 +1,35 @@
 // .useLocalStorage.js
 
-import { useCallback } from "react";
+import { getCurrentUser } from "../utils/actions";
 
 export const useUserStorage = () => {
   const key = "user";
 
-  const setUser = useCallback((user) => {
+  const setUser = async () => {
     try {
-      window.localStorage.setItem(key, JSON.stringify(user));
+      const user = await getCurrentUser();
+      localStorage.setItem(key, JSON.stringify(user));
     } catch (error) {
       console.error("useUserStorage: setUser:", error);
     }
-  }, []);
+  };
 
-  const getUser = useCallback(() => {
+  const getUser = () => {
     try {
-      const item = window.localStorage.getItem(key);
+      const item = localStorage.getItem(key);
       return item ? JSON.parse(item) : undefined;
     } catch (error) {
       console.error("useUserStorage: getUser:", error);
     }
-  }, []);
+  }
 
-  const removeUser = useCallback(() => {
+  const removeUser = () => {
     try {
-      window.localStorage.removeItem(key);
+      localStorage.removeItem(key);
     } catch (error) {
       console.error("useUserStorage: removeUser:", error);
     }
-  }, []);
+  }
 
   return { setUser, getUser, removeUser };
 };
