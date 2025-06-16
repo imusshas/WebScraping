@@ -6,6 +6,7 @@ import { Button } from "../components/ui/Button";
 
 import "react-loading-skeleton/dist/skeleton.css";
 import { fetchProducts } from "../utils/actions";
+import { Spinner } from "./ui/Spinner";
 
 const ProductList = () => {
   const { setShowLogin } = useOutletContext();
@@ -43,7 +44,8 @@ const ProductList = () => {
     <div className="products-container">
       {loading ? (
         <>
-          <div className="loading-sort-btn">
+          <Spinner />
+          {/* <div className="loading-sort-btn">
             <Skeleton className="loading-sort-btn" />
           </div>
           <section className="product-list">
@@ -57,7 +59,7 @@ const ProductList = () => {
                 <Skeleton className="loading-price" />
               </div>
             ))}
-          </section>
+          </section> */}
         </>
       ) : productList.length === 0 ? (
         <>

@@ -6,6 +6,7 @@ import { Button } from "./ui/Button";
 import { useWishlist } from "../context/WishlistContext";
 import { getWishlist, removeFromWishlist, fetchProductDetails } from "../utils/actions";
 import { useUserStorage } from "../hooks/useUserStorage";
+import { Spinner } from "./ui/Spinner";
 
 const Wishlist = () => {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ const Wishlist = () => {
   };
 
   if (loading) {
-    return <div className="products-container">Loading...</div>;
+    return <Spinner />;
   }
 
   if (wishlistItems.length === 0) {
