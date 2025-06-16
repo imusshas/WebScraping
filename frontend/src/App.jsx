@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import AppLayout from "./components/layout/AppLayout";
 import Home from "./components/Home";
 import ProductList from "./components/ProductList";
@@ -23,7 +23,7 @@ function App() {
               <Route path="/product-details/:productId" element={<ProductDetails />} />
               <Route path="/compare-products" element={<CompareProducts />} />
             </Route>
-            <Route path="*" replace="/" />
+            <Route path="*" element={<Navigate to={"/"} replace />} />
           </Routes>
         </BrowserRouter>
       </CompareProvider>
