@@ -16,10 +16,6 @@ const Wishlist = () => {
   const user = useUserStorage().getUser();
 
   useEffect(() => {
-    if (!user) {
-      navigate("/");
-    }
-
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -40,18 +36,13 @@ const Wishlist = () => {
     };
 
     fetchData();
-  }, []);
+  }, [user?.email]);
 
   const handleRemoveFromWishlist = async (productDetailsLink) => {
-    if (!user) {
-      navigate("/");
-      return;
-    }
-
     try {
-      await removeFromWishlist(user.email, productDetailsLink);
+      await removeFromWishlist(user?.email, productDetailsLink);
       setWishlistItems((items) => items.filter((item) => item.productDetailsLink !== productDetailsLink));
-      updateWishlistCount(user.email);
+      updateWishlistCount(user?.email);
     } catch (error) {
       alert(error.response?.data?.message || "Failed to remove from wishlist");
     }
