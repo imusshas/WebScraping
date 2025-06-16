@@ -3,17 +3,18 @@ import { Button } from "../ui/Button";
 import { logout } from "../../utils/actions";
 import { useWishlist } from "../../context/WishlistContext";
 import { useCompare } from "../../context/CompareContext";
+import { useUserStorage } from "../../hooks/useUserStorage";
 
-const Header = ({ setShowLogin }) => {
+const Header = ({ setShowLogin, user }) => {
   const navigate = useNavigate();
   const { wishlistCount, clearWishlistCount } = useWishlist();
   const { compareCount } = useCompare();
-  const user = localStorage.getItem("user");
+  const { removeUser } = useUserStorage();
 
   async function handleLogout() {
     const info = await logout();
     if (info.statusCode === 200) {
-      localStorage.clear("user");
+      removeUser();
       clearWishlistCount();
       navigate("/");
     }

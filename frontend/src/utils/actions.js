@@ -12,6 +12,11 @@ export async function fetchProductDetails(url) {
   return response.data.data;
 }
 
+export async function isAuthenticated() {
+  const response = await axios.get(`http://localhost:3000/auth/check-auth`, { withCredentials: true });
+  return response.data.data
+}
+
 export async function login(email, password) {
   const response = await axios.post(`http://localhost:3000/auth/login`, { email, password }, { withCredentials: true });
   return response.data.data

@@ -4,12 +4,12 @@ import { login } from "../utils/actions";
 import { useWishlist } from "../context/WishlistContext";
 import { useUserStorage } from "../hooks/useUserStorage";
 
-export const Login = ({ isOpen, onClose }) => {
+export const Login = ({ isOpen, onClose, setUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { updateWishlistCount } = useWishlist();
-  const { setUser } = useUserStorage();
+  const userStorage = useUserStorage();
 
   useEffect(() => {
     if (isOpen) {
@@ -38,8 +38,9 @@ export const Login = ({ isOpen, onClose }) => {
     setLoading(true);
     const data = await login(String(email), String(password));
     if (data.user.email) {
-      await setUser();
-      await updateWishlistCount(data.user.email);
+      await userStorage.setUser();
+      setUser(data.user);
+      await updateWishlistCount();
       onClose();
       setLoading(false);
     }
