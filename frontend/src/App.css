@@ -110,6 +110,37 @@ body.no-scroll {
   gap: 2rem;
 }
 
+.filter-sort {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.stock-filter {
+  /* flex: 1; */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter {
+  min-width: fit-content;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 0.5rem;
+  white-space: nowrap; 
+}
+
+.filter input, .filter input:active {
+  border: none;
+  outline: none;
+}
+
 .sort-btn {
   align-self: flex-end;
   background: oklch(64.6% 0.222 41.116);
@@ -152,7 +183,6 @@ body.no-scroll {
   cursor: pointer;
   overflow: hidden;
 }
-
 
 .product-img-container {
   width: 100%;
