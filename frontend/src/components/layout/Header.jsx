@@ -89,7 +89,7 @@ const Header = ({ setShowLogin, user }) => {
           </Button>
         ) : (
           <Button className="login-btn" onClick={() => setShowLogin(true)}>
-            Login
+            Login/Register
           </Button>
         )}
       </nav>
