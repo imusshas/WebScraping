@@ -56,9 +56,12 @@ const Product = ({ imageUrl, title, price, discount, company, productDetailsLink
           )}
           <span>{company}</span>
         </span>
-        <Link to={`/product-details/${productDetailsLink.split("/").pop()}`} target="_blank">
+        {/* <Link to={`/product-details/${productDetailsLink.split("/").pop()}`} target="_blank">
           <img src={imageUrl} alt={title} className="product-img" />
-        </Link>
+        </Link> */}
+        <a href={`${productDetailsLink}`} target="_blank">
+          <img src={imageUrl} alt={title} className="product-img" />
+        </a>
       </div>
       <div className="product-content-container">
         <div className="product-content">
