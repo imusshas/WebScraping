@@ -74,14 +74,18 @@ const Wishlist = () => {
 
           return (
             <article key={item.productDetailsLink} className="product">
-              <span className="company">{product.company}</span>
               <div className="product-img-container">
-                <img
-                  src={product.imageUrls[0]}
-                  alt={product.title}
-                  className="product-img"
-                  onClick={() => navigate(`/product-details/${item.productDetailsLink}`)}
-                />
+                <span className="company">
+                  {product.company === "Ryans" ? (
+                    <img src="/ryans-logo.svg" alt="company logo" />
+                  ) : (
+                    <img src="/star-tech-logo.png" alt="company logo" />
+                  )}
+                  <span>{product.company}</span>
+                </span>
+                <a href={`${product.productDetailsLink}`} target="_blank">
+                  <img src={product.imageUrls[0]} alt={product.title} className="product-img" />
+                </a>
               </div>
               <div className="product-content-container">
                 <div className="product-content">
