@@ -54,7 +54,7 @@ export const getTechLandSearchedProducts = async (searchKey = "", currentPage = 
 
 export const getTechLandSearchedProductDetails = async (url) => {
   try {
-    const browser = await puppeteerExtra.launch({ headless: false });
+    const browser = await puppeteerExtra.launch();
     const page = await browser.newPage();
 
     await page.goto(`https://www.techlandbd.com/${url}`, { timeout: 60000, waitUntil: "domcontentloaded" });
