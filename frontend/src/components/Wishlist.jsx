@@ -17,6 +17,7 @@ const Wishlist = () => {
   const user = useUserStorage().getUser();
 
   useEffect(() => {
+    if (!user?.email) return;
     const fetchData = async () => {
       setLoading(true);
       try {
