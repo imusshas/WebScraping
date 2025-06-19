@@ -184,6 +184,11 @@ body.no-scroll {
   overflow: hidden;
 }
 
+.company-logo {
+  margin-top: 0.125rem;
+  margin-left: 0.125rem;
+}
+
 .product-img-container {
   width: 100%;
   aspect-ratio: 1;
