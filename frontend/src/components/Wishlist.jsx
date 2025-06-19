@@ -7,6 +7,7 @@ import { useWishlist } from "../context/WishlistContext";
 import { getWishlist, removeFromWishlist, fetchProductDetails } from "../utils/actions";
 import { useUserStorage } from "../hooks/useUserStorage";
 import { Spinner } from "./ui/Spinner";
+import { CompanyLogo } from "./CompanyLogo";
 
 const Wishlist = () => {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const Wishlist = () => {
         for (const item of items) {
           const details = await fetchProductDetails(item.productDetailsLink);
           productDetails[item.productDetailsLink] = details;
+          console.log(details);
         }
         setProducts(productDetails);
       } catch (error) {
@@ -77,11 +79,7 @@ const Wishlist = () => {
             <article key={item.productDetailsLink} className="product">
               <div className="product-img-container">
                 <span className="company">
-                  {product.company === "Ryans" ? (
-                    <img src="/ryans-logo.svg" alt="company logo" />
-                  ) : (
-                    <img src="/star-tech-logo.png" alt="company logo" />
-                  )}
+                  <CompanyLogo company={product.company} />
                   <span>{product.company}</span>
                 </span>
                 <a href={`${product.productDetailsLink}`} target="_blank">
