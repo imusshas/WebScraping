@@ -98,7 +98,7 @@ export const getTechLandSearchedProductDetails = async (url) => {
     });
 
 
-    // await browser.close();
+    await browser.close();
 
     const regex = product.reviews.match(/\((\d+)\)/);
     const reviewCount = regex ? parseInt(regex[1], 10) : 0;
