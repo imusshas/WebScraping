@@ -1,13 +1,12 @@
-import puppeteerExtra from "puppeteer-extra";
-import Stealth from "puppeteer-extra-plugin-stealth";
 import { parsePrice } from "./converter.js";
-
-puppeteerExtra.use(Stealth())
+import { puppeteerExtra, userDataDir } from "./puppeteer-browser.js";
 
 export const getStarTecSearchedProducts = async (searchKey = "", currentPage = 1) => {
   try {
-    const browser = await puppeteerExtra.launch();
-    const page = await browser.newPage();
+    const puppeteerBrowser = await puppeteerExtra.launch({
+      userDataDir,
+    });
+    const page = await puppeteerBrowser.newPage();
 
     const url = `https://www.startech.com.bd/product/search?search=${searchKey}&page=${currentPage}`;
     await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
@@ -38,7 +37,7 @@ export const getStarTecSearchedProducts = async (searchKey = "", currentPage = 1
     });
 
 
-    await browser.close();
+    await puppeteerBrowser.close();
 
     products.data = products.data.map(p => ({
       ...p,
@@ -54,8 +53,10 @@ export const getStarTecSearchedProducts = async (searchKey = "", currentPage = 1
 
 export const getStarTecSearchedProductDetails = async (url) => {
   try {
-    const browser = await puppeteerExtra.launch();
-    const page = await browser.newPage();
+    const puppeteerBrowser = await puppeteerExtra.launch({
+      userDataDir,
+    });
+    const page = await puppeteerBrowser.newPage();
 
     await page.goto(`https://www.startech.com.bd/${url}`, { timeout: 60000, waitUntil: "domcontentloaded" });
 
@@ -107,7 +108,7 @@ export const getStarTecSearchedProductDetails = async (url) => {
     });
 
 
-    await browser.close();
+    await puppeteerBrowser.close();
 
     const regex = product.reviews.match(/\((\d+)\)/);
     const reviewCount = regex ? parseInt(regex[1], 10) : 0;

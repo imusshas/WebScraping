@@ -1,14 +1,12 @@
-import puppeteerExtra from "puppeteer-extra";
-import Stealth from "puppeteer-extra-plugin-stealth";
 import { parsePrice } from "./converter.js";
-
-puppeteerExtra.use(Stealth())
+import { puppeteerExtra, userDataDir } from "./puppeteer-browser.js";
 
 export const getRyansSearchedProducts = async (searchKey = "", currentPage = 1) => {
   try {
-    const browser = await puppeteerExtra.launch();
-    const page = await browser.newPage();
-
+    const puppeteerBrowser = await puppeteerExtra.launch({
+      userDataDir,
+    });
+    const page = await puppeteerBrowser.newPage();
 
     const url = `https://www.ryans.com/search?q=${searchKey}&page=${currentPage}`;
     // const url = `https://www.ryans.com/search?q=keyboard`;
@@ -38,7 +36,7 @@ export const getRyansSearchedProducts = async (searchKey = "", currentPage = 1) 
     });
 
 
-    // await browser.close();
+    await puppeteerBrowser.close();
 
     products.data = products.data.map(p => ({
       ...p,
@@ -52,12 +50,12 @@ export const getRyansSearchedProducts = async (searchKey = "", currentPage = 1) 
   }
 }
 
-getRyansSearchedProducts();
-
 export const getRyansSearchedProductDetails = async (url) => {
   try {
-    const browser = await puppeteerExtra.launch();
-    const page = await browser.newPage();
+    const puppeteerBrowser = await puppeteerExtra.launch({
+      userDataDir,
+    });
+    const page = await puppeteerBrowser.newPage();
 
     await page.goto(`https://www.ryans.com/${url}`, { timeout: 60000, waitUntil: "domcontentloaded" });
 
@@ -92,7 +90,7 @@ export const getRyansSearchedProductDetails = async (url) => {
     });
 
 
-    await browser.close();
+    await puppeteerBrowser.close();
 
     product.regularPrice = parsePrice(product.regularPrice);
     product.specialPrice = parsePrice(product.specialPrice);

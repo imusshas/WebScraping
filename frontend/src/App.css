@@ -192,7 +192,7 @@ body.no-scroll {
 .product-img-container {
   width: 100%;
   aspect-ratio: 1;
-  overflow: hidden;
+  /* overflow: hidden; */
   border-radius: 0.5rem;
   cursor: pointer;
 }

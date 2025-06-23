@@ -27,7 +27,7 @@ const Wishlist = () => {
 
         const productDetails = {};
         for (const item of items) {
-          const details = await fetchProductDetails(item.productDetailsLink);
+          const details = await fetchProductDetails(item.productDetailsLink, item?.company);
           productDetails[item.productDetailsLink] = details;
           console.log(details);
         }

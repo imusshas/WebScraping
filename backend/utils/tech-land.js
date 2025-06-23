@@ -1,13 +1,12 @@
-import puppeteerExtra from "puppeteer-extra";
-import Stealth from "puppeteer-extra-plugin-stealth";
 import { parsePrice } from "./converter.js";
-
-puppeteerExtra.use(Stealth())
+import { puppeteerExtra, userDataDir } from "./puppeteer-browser.js";
 
 export const getTechLandSearchedProducts = async (searchKey = "", currentPage = 1) => {
   try {
-    const browser = await puppeteerExtra.launch();
-    const page = await browser.newPage();
+    const puppeteerBrowser = await puppeteerExtra.launch({
+      userDataDir,
+    });
+    const page = await puppeteerBrowser.newPage();
 
     const url = `https://www.techlandbd.com/index.php?route=product/search&search=${searchKey}&page=${currentPage}`;
     await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
@@ -22,7 +21,7 @@ export const getTechLandSearchedProducts = async (searchKey = "", currentPage = 
           const title = product.querySelector(".caption .name a").innerText;
           const price = product.querySelector(".caption .price .price-new")?.innerText || product.querySelector(".caption .price .price-old")?.innerText || product.querySelector(".caption .price .price-normal")?.innerText;
           const discount = product.querySelector(".mark")?.innerText || "";
-          const productDetailsLink = product.querySelector(".product-img")?.getAttribute("href") || "";
+          const productDetailsLink = product.querySelector(".product-img")?.getAttribute("href").split("?")[0] || "";
 
 
           return {
@@ -38,7 +37,7 @@ export const getTechLandSearchedProducts = async (searchKey = "", currentPage = 
     });
 
 
-    await browser.close();
+    await puppeteerBrowser.close();
 
     products.data = products.data.map(p => ({
       ...p,
@@ -54,8 +53,10 @@ export const getTechLandSearchedProducts = async (searchKey = "", currentPage = 
 
 export const getTechLandSearchedProductDetails = async (url) => {
   try {
-    const browser = await puppeteerExtra.launch();
-    const page = await browser.newPage();
+    const puppeteerBrowser = await puppeteerExtra.launch({
+      userDataDir,
+    });
+    const page = await puppeteerBrowser.newPage();
 
     await page.goto(`https://www.techlandbd.com/${url}`, { timeout: 60000, waitUntil: "domcontentloaded" });
 
@@ -72,13 +73,10 @@ export const getTechLandSearchedProductDetails = async (url) => {
 
       const specifications = document.querySelector(".block-attributes table");
       const tables = document.querySelector(".block-description")
-      console.log("specifications:", specifications)
       const descriptions = tables?.querySelectorAll("table")?.[1]
 
       const attributeTitles = specifications ? [...specifications.querySelectorAll(".attribute-name")].map(tag => tag.innerText) : descriptions ? [...descriptions.querySelectorAll("tbody tr td:first-child")].map(tag => tag.innerText) : [];
-      console.log("titles:", attributeTitles);
       const attributeValues = specifications ? [...specifications.querySelectorAll(".attribute-value")].map(tag => tag.innerText) : descriptions ? [...descriptions.querySelectorAll("tbody tr td:last-child")].map(tag => tag.innerText) : []
-      console.log("values:", attributeValues);
       const attributes = attributeTitles?.map((title, index) => ({
         [title]: attributeValues[index] || null
       }));
@@ -98,7 +96,7 @@ export const getTechLandSearchedProductDetails = async (url) => {
     });
 
 
-    await browser.close();
+    await puppeteerBrowser.close();
 
     const regex = product.reviews.match(/\((\d+)\)/);
     const reviewCount = regex ? parseInt(regex[1], 10) : 0;
