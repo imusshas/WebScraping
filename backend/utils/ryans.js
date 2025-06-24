@@ -1,12 +1,10 @@
 import { parsePrice } from "./converter.js";
-import { puppeteerExtra, userDataDir } from "./puppeteer-browser.js";
+import { launchBrowser } from "./puppeteer-browser.js";
 
 export const getRyansSearchedProducts = async (searchKey = "", currentPage = 1) => {
   try {
-    const puppeteerBrowser = await puppeteerExtra.launch({
-      userDataDir,
-    });
-    const page = await puppeteerBrowser.newPage();
+    const browser = await launchBrowser();
+    const page = await browser.newPage();
 
     const url = `https://www.ryans.com/search?q=${searchKey}&page=${currentPage}`;
     // const url = `https://www.ryans.com/search?q=keyboard`;
@@ -36,7 +34,7 @@ export const getRyansSearchedProducts = async (searchKey = "", currentPage = 1) 
     });
 
 
-    await puppeteerBrowser.close();
+    await browser.close();
 
     products.data = products.data.map(p => ({
       ...p,
@@ -52,10 +50,8 @@ export const getRyansSearchedProducts = async (searchKey = "", currentPage = 1) 
 
 export const getRyansSearchedProductDetails = async (url) => {
   try {
-    const puppeteerBrowser = await puppeteerExtra.launch({
-      userDataDir,
-    });
-    const page = await puppeteerBrowser.newPage();
+    const browser = await launchBrowser();
+    const page = await browser.newPage();
 
     await page.goto(`https://www.ryans.com/${url}`, { timeout: 60000, waitUntil: "domcontentloaded" });
 
@@ -90,7 +86,7 @@ export const getRyansSearchedProductDetails = async (url) => {
     });
 
 
-    await puppeteerBrowser.close();
+    await browser.close();
 
     product.regularPrice = parsePrice(product.regularPrice);
     product.specialPrice = parsePrice(product.specialPrice);

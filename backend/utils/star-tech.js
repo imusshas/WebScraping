@@ -1,12 +1,10 @@
 import { parsePrice } from "./converter.js";
-import { puppeteerExtra, userDataDir } from "./puppeteer-browser.js";
+import { launchBrowser } from "./puppeteer-browser.js";
 
-export const getStarTecSearchedProducts = async (searchKey = "", currentPage = 1) => {
+export const getStarTechSearchedProducts = async (searchKey = "", currentPage = 1) => {
   try {
-    const puppeteerBrowser = await puppeteerExtra.launch({
-      userDataDir,
-    });
-    const page = await puppeteerBrowser.newPage();
+    const browser = await launchBrowser();
+    const page = await browser.newPage();
 
     const url = `https://www.startech.com.bd/product/search?search=${searchKey}&page=${currentPage}`;
     await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
@@ -37,7 +35,7 @@ export const getStarTecSearchedProducts = async (searchKey = "", currentPage = 1
     });
 
 
-    await puppeteerBrowser.close();
+    await browser.close();
 
     products.data = products.data.map(p => ({
       ...p,
@@ -46,17 +44,15 @@ export const getStarTecSearchedProducts = async (searchKey = "", currentPage = 1
 
     return products.data;
   } catch (error) {
-    console.log("getStarTecSearchedProducts:", error);
+    console.log("getStarTechSearchedProducts:", error);
     return null;
   }
 }
 
-export const getStarTecSearchedProductDetails = async (url) => {
+export const getStarTechSearchedProductDetails = async (url) => {
   try {
-    const puppeteerBrowser = await puppeteerExtra.launch({
-      userDataDir,
-    });
-    const page = await puppeteerBrowser.newPage();
+    const browser = await launchBrowser();
+    const page = await browser.newPage();
 
     await page.goto(`https://www.startech.com.bd/${url}`, { timeout: 60000, waitUntil: "domcontentloaded" });
 
@@ -108,7 +104,7 @@ export const getStarTecSearchedProductDetails = async (url) => {
     });
 
 
-    await puppeteerBrowser.close();
+    await browser.close();
 
     const regex = product.reviews.match(/\((\d+)\)/);
     const reviewCount = regex ? parseInt(regex[1], 10) : 0;
@@ -119,6 +115,6 @@ export const getStarTecSearchedProductDetails = async (url) => {
 
     return { ...product, productDetailsLink: `https://www.startech.com.bd/${url}`  };
   } catch (error) {
-    console.log("getStarTecSearchedProductDetails:", error)
+    console.log("getStarTechSearchedProductDetails:", error)
   }
 }

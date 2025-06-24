@@ -1,7 +1,7 @@
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { getBinaryLogicSearchedProductDetails, getBinaryLogicSearchedProducts } from "../utils/binary-logic.js";
 import { getRyansSearchedProductDetails, getRyansSearchedProducts } from "../utils/ryans.js";
-import { getStarTecSearchedProductDetails, getStarTecSearchedProducts } from "../utils/star-tech.js";
+import { getStarTechSearchedProductDetails, getStarTechSearchedProducts } from "../utils/star-tech.js";
 import { getTechLandSearchedProductDetails, getTechLandSearchedProducts } from "../utils/tech-land.js";
 
 
@@ -12,12 +12,20 @@ export const getSearchedProducts = async (req, res) => {
       res.status(400).json({ message: "Search key is required" })
       return;
     }
-    const ryansSearchedProducts = await getRyansSearchedProducts(searchKey, currentPage);
-    const starTechSearchedProducts = await getStarTecSearchedProducts(searchKey, currentPage);
-    const techLandSearchedProducts = await getTechLandSearchedProducts(searchKey, currentPage);
-    const binaryLogicSearchedProducts = await getBinaryLogicSearchedProducts(searchKey, currentPage);
+    const results = await Promise.allSettled([
+  getRyansSearchedProducts(searchKey, currentPage),
+  getStarTechSearchedProducts(searchKey, currentPage),
+  getTechLandSearchedProducts(searchKey, currentPage),
+  getBinaryLogicSearchedProducts(searchKey, currentPage),
+]);
 
-    const products = [...ryansSearchedProducts, ...starTechSearchedProducts, ...techLandSearchedProducts, ...binaryLogicSearchedProducts]
+const products = results.reduce((acc, result) => {
+  if (result.status === "fulfilled" && Array.isArray(result.value)) {
+    acc.push(...result.value);
+  }
+  return acc;
+}, []);
+
 
     res.status(200).json(new ApiResponse(200, products))
   } catch (error) {
@@ -49,8 +57,9 @@ export const getSearchedProductDetails = async (req, res) => {
 const searchedProductDetails = async (url, company) => {
   switch (company) {
     case "Ryans": return getRyansSearchedProductDetails(url);
-    case "StarTech": return getStarTecSearchedProductDetails(url);
+    case "StarTech": return getStarTechSearchedProductDetails(url);
     case "TechLandBD": return getTechLandSearchedProductDetails(url);
     case "BinaryLogic": return getBinaryLogicSearchedProductDetails(url);
+    default: throw new Error(`Unsupported company: ${company}`);
   }
 }

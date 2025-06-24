@@ -1,12 +1,10 @@
 import { parsePrice } from "./converter.js";
-import { puppeteerExtra, userDataDir } from "./puppeteer-browser.js";
+import { launchBrowser} from "./puppeteer-browser.js";
 
 export const getTechLandSearchedProducts = async (searchKey = "", currentPage = 1) => {
   try {
-    const puppeteerBrowser = await puppeteerExtra.launch({
-      userDataDir,
-    });
-    const page = await puppeteerBrowser.newPage();
+    const browser = await launchBrowser();
+    const page = await browser.newPage();
 
     const url = `https://www.techlandbd.com/index.php?route=product/search&search=${searchKey}&page=${currentPage}`;
     await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
@@ -37,7 +35,7 @@ export const getTechLandSearchedProducts = async (searchKey = "", currentPage = 
     });
 
 
-    await puppeteerBrowser.close();
+    await browser.close();
 
     products.data = products.data.map(p => ({
       ...p,
@@ -46,17 +44,15 @@ export const getTechLandSearchedProducts = async (searchKey = "", currentPage = 
 
     return products.data;
   } catch (error) {
-    console.log("getStarTecSearchedProducts:", error);
+    console.log("getTechLandSearchedProducts:", error);
     return null;
   }
 }
 
 export const getTechLandSearchedProductDetails = async (url) => {
   try {
-    const puppeteerBrowser = await puppeteerExtra.launch({
-      userDataDir,
-    });
-    const page = await puppeteerBrowser.newPage();
+    const browser = await launchBrowser();
+    const page = await browser.newPage();
 
     await page.goto(`https://www.techlandbd.com/${url}`, { timeout: 60000, waitUntil: "domcontentloaded" });
 
@@ -96,7 +92,7 @@ export const getTechLandSearchedProductDetails = async (url) => {
     });
 
 
-    await puppeteerBrowser.close();
+    await browser.close();
 
     const regex = product.reviews.match(/\((\d+)\)/);
     const reviewCount = regex ? parseInt(regex[1], 10) : 0;
@@ -107,6 +103,6 @@ export const getTechLandSearchedProductDetails = async (url) => {
 
     return { ...product, productDetailsLink: `https://www.techlandbd.com/${url}` };
   } catch (error) {
-    console.log("getStarTecSearchedProductDetails:", error)
+    console.log("getTechLandSearchedProducts:", error)
   }
 }
