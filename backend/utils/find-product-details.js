@@ -1,12 +1,14 @@
-import { getRyansSearchedProductDetails } from "./ryans.js";
-import { getStarTechSearchedProductDetails } from "./star-tech.js";
+import { getBinaryLogicSearchedProductDetails } from "../utils/binary-logic.js";
+import { getRyansSearchedProductDetails } from "../utils/ryans.js";
+import { getStarTechSearchedProductDetails } from "../utils/star-tech.js";
+import { getTechLandSearchedProductDetails } from "../utils/tech-land.js";
 
-export const findProductDetails = async (url) => {
-  try {
-    const ryansProductDetails = await getRyansSearchedProductDetails(url);
-    const starTechProductDetails = await getStarTechSearchedProductDetails(url);
-    return ryansProductDetails.title ? ryansProductDetails : starTechProductDetails;
-  } catch (error) {
-    console.log(error);
+export const findProductDetails = async (url, company) => {
+  switch (company) {
+    case "Ryans": return getRyansSearchedProductDetails(url);
+    case "StarTech": return getStarTechSearchedProductDetails(url);
+    case "TechLandBD": return getTechLandSearchedProductDetails(url);
+    case "BinaryLogic": return getBinaryLogicSearchedProductDetails(url);
+    default: throw new Error(`Unsupported company: ${company}`);
   }
 }

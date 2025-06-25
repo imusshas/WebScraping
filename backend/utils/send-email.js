@@ -30,7 +30,7 @@ const transporter = nodemailer.createTransport({
 export async function checkWishlistAndSendEmail() {
   const wishItems = await WishItem.find({})
   for (const item of wishItems) {
-    const product = await findProductDetails(item.productDetailsLink)
+    const product = await findProductDetails(item.productDetailsLink, item.company)
     const price = product.specialPrice ? product.specialPrice : product.regularPrice;
     if (item.price - price > 0) {
       const mailOptions = {
