@@ -8,6 +8,7 @@ export const CompanyLogo = ({ company }) => {
       {company === "TechLandBD" && <img src="/techland-logo.png" alt="company logo"  className="company-logo"/>}
       {company === "AppleGadgets" && <img src="/applegadgets-logo.png" alt="company logo" className="company-logo" />}
       {company === "BinaryLogic" && <img src="/binary-logic-logo.webp" alt="company logo" className="company-logo" />}
+      {company === "SkyLandBD" && <img src="/skyland-logo.webp" alt="company logo" className="company-logo" />}
     </div>
   );
 };
