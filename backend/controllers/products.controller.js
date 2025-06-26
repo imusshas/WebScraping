@@ -1,6 +1,7 @@
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { getBinaryLogicSearchedProductDetails, getBinaryLogicSearchedProducts } from "../utils/binary-logic.js";
+import { getBinaryLogicSearchedProducts } from "../utils/binary-logic.js";
 import { findProductDetails } from "../utils/find-product-details.js";
+import { getGlobalBrandSearchedProducts } from "../utils/global-brand-private.js";
 import { getRyansSearchedProducts } from "../utils/ryans.js";
 import { getSkyLandSearchedProducts } from "../utils/sky-land.js";
 import { getStarTechSearchedProducts } from "../utils/star-tech.js";
@@ -21,7 +22,8 @@ export const getSearchedProducts = async (req, res) => {
       getTechLandSearchedProducts(searchKey, currentPage),
       getBinaryLogicSearchedProducts(searchKey, currentPage),
       getSkyLandSearchedProducts(searchKey, currentPage),
-      getUCCSearchedProducts(searchKey, currentPage)
+      getUCCSearchedProducts(searchKey, currentPage),
+      getGlobalBrandSearchedProducts(searchKey, currentPage)
     ]);
 
     const products = results.reduce((acc, result) => {

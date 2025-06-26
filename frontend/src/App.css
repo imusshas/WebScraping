@@ -187,6 +187,8 @@ body.no-scroll {
 .company-logo {
   margin-top: 0.125rem;
   margin-left: 0.125rem;
+  background: #000;
+  border-top-left-radius: 0.5rem;
 }
 
 .product-img-container {

@@ -58,8 +58,12 @@ const CompareProducts = () => {
 										<ProductImage title={product.title} imageUrl={product.imageUrls[0]} company={product.company} />
 										<div className="compared-product-content">
 											{/* Change the color */}
-											{product.specialPrice && <p className="special-price">Special Price: {product.specialPrice}</p>}
-											<p>Regular Price: {product.regularPrice}</p>
+											{product.specialPrice !== "Out Of Stock" ? (
+												<p className="special-price">Special Price: {product.specialPrice}৳</p>
+											) : (
+												<p className="special-price">Special Price: </p>
+											)}
+											<p>Regular Price: {product.regularPrice}৳</p>
 											<h2>{product.title}</h2>
 											<p>Product Id: {product.productId}</p>
 										</div>
