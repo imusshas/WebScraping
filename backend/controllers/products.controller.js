@@ -5,6 +5,7 @@ import { getRyansSearchedProducts } from "../utils/ryans.js";
 import { getSkyLandSearchedProducts } from "../utils/sky-land.js";
 import { getStarTechSearchedProducts } from "../utils/star-tech.js";
 import { getTechLandSearchedProducts } from "../utils/tech-land.js";
+import { getUCCSearchedProducts } from "../utils/ucc.js";
 
 
 export const getSearchedProducts = async (req, res) => {
@@ -19,7 +20,8 @@ export const getSearchedProducts = async (req, res) => {
       getStarTechSearchedProducts(searchKey, currentPage),
       getTechLandSearchedProducts(searchKey, currentPage),
       getBinaryLogicSearchedProducts(searchKey, currentPage),
-      getSkyLandSearchedProducts(searchKey, currentPage)
+      getSkyLandSearchedProducts(searchKey, currentPage),
+      getUCCSearchedProducts(searchKey, currentPage)
     ]);
 
     const products = results.reduce((acc, result) => {
