@@ -63,9 +63,9 @@ export const getBinaryLogicSearchedProductDetails = async (url) => {
       const smallButtons = productInfo && [...productInfo.querySelectorAll(".product-small-buttons")].flatMap(elem => elem.innerText.split("\n")).filter(text => text.trim()) || [];
       const title = productInfo && productInfo.querySelector(".product_d_right form h1")?.innerText?.trim()?.split("\n")?.[0] || "";
       const reviews = ""
-      const productId = smallButtons.length == 5 ? smallButtons[3] : smallButtons[1] || "";
-      const specialPrice = smallButtons.length == 5 ? smallButtons[1] : "";
-      const regularPrice = smallButtons.length == 5 ? smallButtons[2] : "";
+      const productId = smallButtons.length >= 5 ? smallButtons[3] : smallButtons[1] || "";
+      const specialPrice = smallButtons.length >= 5 ? smallButtons[1] : "";
+      const regularPrice = smallButtons.length >= 5 ? smallButtons[2] : "";
 
 
       const specifications = document.querySelector(".product_d_inner table");
@@ -100,7 +100,7 @@ export const getBinaryLogicSearchedProductDetails = async (url) => {
     product.regularPrice = parsePrice(product.regularPrice);
     product.specialPrice = parsePrice(product.specialPrice);
 
-    return { ...product, productDetailsLink: `https://www.techlandbd.com/${url}` };
+    return { ...product, productDetailsLink: `https://www.binarylogic.com.bd/${url}` };
   } catch (error) {
     console.log("getBinaryLogicSearchedProductDetails:", error)
   }

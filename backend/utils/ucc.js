@@ -105,7 +105,7 @@ export const getUCCSearchedProductDetails = async (url) => {
     product.regularPrice = parsePrice(product.regularPrice);
     product.specialPrice = parsePrice(product.specialPrice);
 
-    return { ...product, productDetailsLink: `https://www.techlandbd.com/${url}` };
+    return { ...product, productDetailsLink: `https://www.ucc.com.bd/${url}` };
   } catch (error) {
     console.log("getSkyLandSearchedProductDetails:", error)
   }

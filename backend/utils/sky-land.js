@@ -109,7 +109,7 @@ export const getSkyLandSearchedProductDetails = async (url) => {
     product.regularPrice = parsePrice(product.regularPrice);
     product.specialPrice = parsePrice(product.specialPrice);
 
-    return { ...product, productDetailsLink: `https://www.techlandbd.com/${url}` };
+    return { ...product, productDetailsLink: `https://www.skyland.com.bd/${url}` };
   } catch (error) {
     console.log("getSkyLandSearchedProductDetails:", error)
   }
