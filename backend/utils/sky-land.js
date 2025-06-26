@@ -114,5 +114,3 @@ export const getSkyLandSearchedProductDetails = async (url) => {
     console.log("getSkyLandSearchedProductDetails:", error)
   }
 }
-
-getSkyLandSearchedProductDetails()
