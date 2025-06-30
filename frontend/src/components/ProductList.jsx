@@ -28,12 +28,13 @@ const ProductList = () => {
 
 	useEffect(() => {
 		setLoading(true);
-		const params = new URLSearchParams({ pageSize: 50 });
+		const params = new URLSearchParams({ pageSize: productsPerPage });
 		fetchProducts(`${searchKey}/${page}?${params.toString()}`).then((response) => {
 			setAllProducts(response || []);
+			console.log(response?.length);
 			setLoading(false);
 		});
-	}, [searchKey, page]);
+	}, [searchKey, page, productsPerPage]);
 
 	const paginatedProducts = useMemo(() => {
 		const start = (page - 1) * productsPerPage;
