@@ -8,9 +8,13 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { fetchProducts } from "../utils/actions";
 import { Spinner } from "./ui/Spinner";
 import { SortIcon } from "./ui/SortIcon";
+import { useCompareStorage } from "../hooks/useCompareStorage";
+import { useCompare } from "../context/CompareContext";
 
 const ProductList = () => {
 	const { setShowLogin } = useOutletContext();
+	const { clearAll } = useCompareStorage();
+	const { updateCompareCount } = useCompare();
 	const navigate = useNavigate();
 	const [allProducts, setAllProducts] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -147,6 +151,14 @@ const ProductList = () => {
 						<Button className="sort-btn" onClick={() => setSortAsc(!sortAsc)}>
 							Price: {sortButtonText}
 							<SortIcon />
+						</Button>
+						<Button
+							onClick={() => {
+								clearAll();
+								updateCompareCount();
+							}}
+						>
+							Clear Compare
 						</Button>
 					</div>
 					<section className="product-list">
