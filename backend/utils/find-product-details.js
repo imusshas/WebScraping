@@ -5,6 +5,7 @@ import { getTechLandSearchedProductDetails } from "../utils/tech-land.js";
 import { getGlobalBrandSearchedProductDetails } from "./global-brand-private.js";
 import { getSkyLandSearchedProductDetails } from "./sky-land.js";
 import { getUCCSearchedProductDetails } from "./ucc.js";
+import { getUltraTechSearchedProductDetails } from "./ultra-tech.js";
 
 export const findProductDetails = async (url, company) => {
   switch (company) {
@@ -15,6 +16,7 @@ export const findProductDetails = async (url, company) => {
     case "SkyLandBD": return getSkyLandSearchedProductDetails(url);
     case "UCC": return getUCCSearchedProductDetails(url);
     case "GlobalBrand": return getGlobalBrandSearchedProductDetails(url);
+    case "UltraTech": return getUltraTechSearchedProductDetails(url);
     default: throw new Error(`Unsupported company: ${company}`);
   }
 }
