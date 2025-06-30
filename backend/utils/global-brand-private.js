@@ -6,8 +6,8 @@ export const getGlobalBrandSearchedProducts = async (searchKey = "", currentPage
     const browser = await launchBrowser();
     const page = await browser.newPage();
 
-    // const url = `https://www.globalbrand.com.bd/index.php?route=product/search&search=${searchKey}&page=${currentPage}`;
-    const url = `https://www.globalbrand.com.bd/index.php?route=product/search&search=monitor&page=1`;
+    const url = `https://www.globalbrand.com.bd/index.php?route=product/search&search=${searchKey}&page=${currentPage}`;
+    // const url = `https://www.globalbrand.com.bd/index.php?route=product/search&search=monitor&page=1`;
     await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
 
 
