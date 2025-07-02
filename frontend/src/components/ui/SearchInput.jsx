@@ -1,9 +1,10 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 
-function SearchInput({ searchKey, setSearchKey }) {
+function SearchInput() {
 	const navigate = useNavigate();
 	const inputRef = useRef(null);
+	const [searchKey, setSearchKey] = useState("");
 
 	return (
 		<div className="search-content">

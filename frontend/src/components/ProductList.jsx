@@ -14,41 +14,37 @@ import { useCompare } from "../context/CompareContext";
 const ProductList = () => {
 	const { setShowLogin } = useOutletContext();
 	const { clearAll } = useCompareStorage();
-	const { updateCompareCount } = useCompare();
+	const { compareCount, updateCompareCount } = useCompare();
 	const navigate = useNavigate();
 	const [allProducts, setAllProducts] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [sortAsc, setSortAsc] = useState(true);
 	const [stockFilter, setStockFilter] = useState("all");
 	const sortButtonText = sortAsc ? "Low To High" : "High To Low";
-	const [productsPerPage, setProductsPerPage] = useState(20);
 
 	const { searchKey, currentPage } = useParams();
-	const page = Number(currentPage) || 1;
+	const page = Number(currentPage);
 
 	useEffect(() => {
 		setLoading(true);
-		const params = new URLSearchParams({ pageSize: productsPerPage });
-		fetchProducts(`${searchKey}/${page}?${params.toString()}`).then((response) => {
-			setAllProducts(response || []);
-			console.log(response?.length);
-			setLoading(false);
-		});
-	}, [searchKey, page, productsPerPage]);
+		fetchProducts(searchKey, currentPage)
+			.then((response) => {
+				setAllProducts(response || []);
+			})
+			.finally(() => {
+				setLoading(false);
+			});
+	}, [searchKey, currentPage]);
 
 	const paginatedProducts = useMemo(() => {
-		const start = (page - 1) * productsPerPage;
-		const end = start + productsPerPage;
-		const paged = allProducts.slice(start, end);
-
-		const filtered = paged.filter((p) => {
+		const filtered = allProducts.filter((p) => {
 			const isStock = typeof p.price === "number";
 			if (stockFilter === "in") return isStock;
 			if (stockFilter === "out") return !isStock;
 			return true;
 		});
 
-		return [...filtered].sort((a, b) => {
+		const sorted = [...filtered].sort((a, b) => {
 			const isAStock = typeof a.price === "number";
 			const isBStock = typeof b.price === "number";
 
@@ -58,7 +54,9 @@ const ProductList = () => {
 
 			return sortAsc ? a.price - b.price : b.price - a.price;
 		});
-	}, [allProducts, page, productsPerPage, sortAsc, stockFilter]);
+
+		return sorted;
+	}, [allProducts, sortAsc, stockFilter]);
 
 	const handlePageChange = (newPage) => {
 		navigate(`/products/${searchKey}/${newPage}`);
@@ -87,7 +85,7 @@ const ProductList = () => {
 				</>
 			) : paginatedProducts.length === 0 ? (
 				<>
-					<img src={"/empty-box.jpg"} alt="no products left" className="empty-product-img" />
+					<p className="empty-product-img">No product left</p>
 					<div className="pagination">
 						<Button onClick={() => navigate(`/`)}>Go Home</Button>
 					</div>
@@ -127,28 +125,6 @@ const ProductList = () => {
 								Out of Stock
 							</label>
 						</div>
-						<div className="per-page-select">
-							<label>
-								Products per page:&nbsp;
-								<select
-									value={productsPerPage}
-									name="products_per_page"
-									onChange={(e) => setProductsPerPage(Number(e.target.value))}
-								>
-									<option value={20} name="20_products_per_page">
-										20
-									</option>
-									<option value={30} name="30_products_per_page">
-										30
-									</option>
-									{allProducts.length >= 50 && (
-										<option value={50} name="50_products_per_page">
-											50
-										</option>
-									)}
-								</select>
-							</label>
-						</div>
 						<Button className="sort-btn" onClick={() => setSortAsc(!sortAsc)}>
 							Price: {sortButtonText}
 							<SortIcon />
@@ -158,6 +134,7 @@ const ProductList = () => {
 								clearAll();
 								updateCompareCount();
 							}}
+							disabled={compareCount === 0}
 						>
 							Clear Compare
 						</Button>
@@ -171,9 +148,7 @@ const ProductList = () => {
 						<Button onClick={() => handlePageChange(page - 1)} disabled={page <= 1}>
 							Previous
 						</Button>
-						<Button onClick={() => handlePageChange(page + 1)} disabled={page * productsPerPage >= allProducts.length}>
-							Next
-						</Button>
+						<Button onClick={() => handlePageChange(page + 1)}>Next</Button>
 					</div>
 				</>
 			)}

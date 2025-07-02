@@ -2,21 +2,43 @@ import { useCompareStorage } from "../hooks/useCompareStorage";
 import { Button } from "./ui/Button";
 import { comparisonTable } from "../utils/comparisonTable";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import { useCompare } from "../context/CompareContext";
 import { CompanyLogo } from "./CompanyLogo";
 import { ProductImage } from "./ProductImage";
+import { useUserStorage } from "../hooks/useUserStorage";
+import { addToWishlist } from "../utils/actions";
+import { useWishlist } from "../context/WishlistContext";
 
 const CompareProducts = () => {
 	const navigate = useNavigate();
 	const { getProducts, removeProduct, clearAll } = useCompareStorage();
 	const { updateCompareCount } = useCompare();
 	const [products, setProducts] = useState([]);
+	const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
 	const comparableAttributes = comparisonTable(products);
+	const { updateWishlistCount } = useWishlist();
+	const { setShowLogin } = useOutletContext();
+	const user = useUserStorage().getUser();
 
 	useEffect(() => {
 		setProducts(getProducts());
 	}, [getProducts]);
+
+	const handleAddToWishlist = async (productId, price, company) => {
+		if (!user) {
+			setShowLogin(true);
+			return;
+		}
+		setIsAddingToWishlist(true);
+		try {
+			await addToWishlist(productId, price, company, user.email);
+			updateWishlistCount(user.email);
+		} catch (error) {
+			alert(error.response?.data?.message || "Failed to add to wishlist");
+		}
+		setIsAddingToWishlist(false);
+	};
 
 	if (products.length === 0)
 		return (
@@ -47,7 +69,7 @@ const CompareProducts = () => {
 								</Button>
 							</div>
 						</th>
-						{products.map((product) => (
+						{products.map((product, index) => (
 							<th key={product.key}>
 								<a href={product.productDetailsLink} target="_blank">
 									<div className="compared-product">
@@ -93,6 +115,22 @@ const CompareProducts = () => {
 													/>
 												</g>
 											</svg>
+										</Button>
+										<Button
+											onClick={async () => {
+												const { company, productDetailsLink, specialPrice, regularPrice } = product;
+												const productId =
+													company === "TechLandBD"
+														? productDetailsLink.split("/").pop()
+														: productDetailsLink.split("/").pop();
+												handleAddToWishlist(productId, specialPrice || regularPrice, company);
+											}}
+											disabled={
+												(isAddingToWishlist && product.productDetailsLink === products[index].productDetailsLink) ||
+												product.regularPrice === "Out Of Stock"
+											}
+										>
+											Add To Wishlist
 										</Button>
 									</div>
 								</a>

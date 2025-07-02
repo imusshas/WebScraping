@@ -1,11 +1,8 @@
 import { parsePrice } from "./converter.js";
 import { launchBrowser } from "./puppeteer-browser.js";
 
-export const getGlobalBrandSearchedProducts = async (searchKey = "", currentPage = 1) => {
+export const getGlobalBrandSearchedProducts = async (page, searchKey = "", currentPage = 1) => {
   try {
-    const browser = await launchBrowser();
-    const page = await browser.newPage();
-
     const url = `https://www.globalbrand.com.bd/index.php?route=product/search&search=${searchKey}&page=${currentPage}`;
     // const url = `https://www.globalbrand.com.bd/index.php?route=product/search&search=monitor&page=1`;
     await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
@@ -34,9 +31,6 @@ export const getGlobalBrandSearchedProducts = async (searchKey = "", currentPage
         }),
       }
     });
-
-
-    await browser.close();
 
     products.data = products.data.map(p => ({
       ...p,

@@ -1,11 +1,8 @@
 import { parsePrice } from "./converter.js";
 import { launchBrowser } from "./puppeteer-browser.js";
 
-export const getRyansSearchedProducts = async (searchKey = "", currentPage = 1) => {
+export const getRyansSearchedProducts = async (page, searchKey = "", currentPage = 1) => {
   try {
-    const browser = await launchBrowser();
-    const page = await browser.newPage();
-
     const url = `https://www.ryans.com/search?q=${searchKey}&page=${currentPage}`;
     // const url = `https://www.ryans.com/search?q=keyboard`;
     await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
@@ -32,10 +29,7 @@ export const getRyansSearchedProducts = async (searchKey = "", currentPage = 1) 
         }),
       }
     });
-
-
-    await browser.close();
-
+    
     products.data = products.data.map(p => ({
       ...p,
       price: parsePrice(p.price),

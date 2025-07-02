@@ -2,6 +2,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { getBinaryLogicSearchedProducts } from "../utils/binary-logic.js";
 import { findProductDetails } from "../utils/find-product-details.js";
 import { getGlobalBrandSearchedProducts } from "../utils/global-brand-private.js";
+import { launchBrowser } from "../utils/puppeteer-browser.js";
 import { getRyansSearchedProducts } from "../utils/ryans.js";
 import { getSkyLandSearchedProducts } from "../utils/sky-land.js";
 import { getStarTechSearchedProducts } from "../utils/star-tech.js";
@@ -13,30 +14,46 @@ import { getUltraTechSearchedProducts } from "../utils/ultra-tech.js";
 export const getSearchedProducts = async (req, res) => {
   try {
     const { searchKey, currentPage } = req.params;
+    console.log("params:", req.params);
     if (!searchKey) {
       res.status(400).json({ message: "Search key is required" })
       return;
     }
-    const results = await Promise.allSettled([
-      getRyansSearchedProducts(searchKey, currentPage),
-      getStarTechSearchedProducts(searchKey, currentPage),
-      getTechLandSearchedProducts(searchKey, currentPage),
-      getBinaryLogicSearchedProducts(searchKey, currentPage),
-      getSkyLandSearchedProducts(searchKey, currentPage),
-      getUCCSearchedProducts(searchKey, currentPage),
-      getGlobalBrandSearchedProducts(searchKey, currentPage),
-      getUltraTechSearchedProducts(searchKey, currentPage),
-    ]);
 
-    const products = results.reduce((acc, result) => {
-      if (result.status === "fulfilled" && Array.isArray(result.value)) {
-        acc.push(...result.value);
+    const browser = await launchBrowser();
+
+    const sources = [
+      { name: "Ryans", fn: getRyansSearchedProducts },
+      { name: "StarTech", fn: getStarTechSearchedProducts },
+      { name: "TechLand", fn: getTechLandSearchedProducts },
+      { name: "BinaryLogic", fn: getBinaryLogicSearchedProducts },
+      { name: "SkyLand", fn: getSkyLandSearchedProducts },
+      { name: "UCC", fn: getUCCSearchedProducts },
+      { name: "GlobalBrand", fn: getGlobalBrandSearchedProducts },
+      { name: "UltraTech", fn: getUltraTechSearchedProducts },
+    ];
+
+    const scrapePromises = sources.map(async ({ fn }) => {
+      const page = await browser.newPage();
+      try {
+        const result = await fn(page, searchKey, currentPage);
+        return result;
+      } finally {
+        await page.close();
       }
+    });
+
+    const results = await Promise.allSettled(scrapePromises);
+
+    const allProducts = results.reduce((acc, result) => {
+      if (result.status === "fulfilled") acc.push(...result.value);
       return acc;
     }, []);
 
+    await browser.close();
+    console.log(allProducts.length)
+    res.status(200).json(new ApiResponse(200, allProducts));
 
-    res.status(200).json(new ApiResponse(200, products))
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message })

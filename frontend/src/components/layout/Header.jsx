@@ -4,8 +4,7 @@ import { logout } from "../../utils/actions";
 import { useWishlist } from "../../context/WishlistContext";
 import { useCompare } from "../../context/CompareContext";
 import { useUserStorage } from "../../hooks/useUserStorage";
-import SearchInput from "./SearchInput";
-import { useState } from "react";
+import SearchInput from "../ui/SearchInput";
 
 const Header = ({ setShowLogin, user }) => {
 	const navigate = useNavigate();
@@ -13,7 +12,6 @@ const Header = ({ setShowLogin, user }) => {
 	const { compareCount } = useCompare();
 	const { removeUser } = useUserStorage();
 	const location = useLocation();
-	const [key, setKey] = useState(decodeURIComponent(location.pathname.split("/")?.[2] || "").toLowerCase());
 
 	async function handleLogout() {
 		const info = await logout();
@@ -31,7 +29,7 @@ const Header = ({ setShowLogin, user }) => {
 					buy<span>bliss</span>
 				</Link>
 			</h1>
-			{location.pathname !== "/" && <SearchInput searchKey={key} setSearchKey={setKey} />}
+			{location.pathname !== "/" && <SearchInput />}
 			<nav>
 				<Link to={"/compare-products"} className="compare-link">
 					<div className="compare-container">
