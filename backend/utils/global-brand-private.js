@@ -100,8 +100,6 @@ export const getGlobalBrandSearchedProductDetails = async (url) => {
     product.regularPrice = parsePrice(product.regularPrice);
     product.specialPrice = parsePrice(product.specialPrice);
 
-    console.log(product);
-
     return { ...product, productDetailsLink: `https://www.globalbrand.com.bd/${url}` };
   } catch (error) {
     console.log("getGlobalBrandSearchedProductDetails:", error)
