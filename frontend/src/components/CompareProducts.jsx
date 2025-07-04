@@ -25,14 +25,14 @@ const CompareProducts = () => {
 		setProducts(getProducts());
 	}, [getProducts]);
 
-	const handleAddToWishlist = async (productId, price, company) => {
+	const handleAddToWishlist = async (productDetailsLink, price, company) => {
 		if (!user) {
 			setShowLogin(true);
 			return;
 		}
 		setIsAddingToWishlist(true);
 		try {
-			await addToWishlist(productId, price, company, user.email);
+			await addToWishlist(productDetailsLink, price, company, user.email);
 			updateWishlistCount(user.email);
 		} catch (error) {
 			alert(error.response?.data?.message || "Failed to add to wishlist");
@@ -87,7 +87,7 @@ const CompareProducts = () => {
 											)}
 											<p>Regular Price: {product.regularPrice}৳</p>
 											<h2>{product.title}</h2>
-											<p>Product Id: {product.productId}</p>
+											{/* <p>Product Id: {product.productId}</p> */}
 										</div>
 										<Button
 											className="close-modal-btn"
@@ -119,11 +119,11 @@ const CompareProducts = () => {
 										<Button
 											onClick={async () => {
 												const { company, productDetailsLink, specialPrice, regularPrice } = product;
-												const productId =
-													company === "TechLandBD"
-														? productDetailsLink.split("/").pop()
-														: productDetailsLink.split("/").pop();
-												handleAddToWishlist(productId, specialPrice || regularPrice, company);
+												// const productId =
+												// 	company === "TechLandBD"
+												// 		? productDetailsLink.split("/").pop()
+												// 		: productDetailsLink.split("/").pop();
+												handleAddToWishlist(productDetailsLink, specialPrice || regularPrice, company);
 											}}
 											disabled={
 												(isAddingToWishlist && product.productDetailsLink === products[index].productDetailsLink) ||

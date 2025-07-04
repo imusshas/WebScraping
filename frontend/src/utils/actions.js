@@ -8,7 +8,10 @@ export async function fetchProducts(searchKey, currentPage) {
 }
 
 export async function fetchProductDetails(url, company) {
-  const response = await axios.get(`http://localhost:3000/products//details/${url}/${company}`);
+  const response = await axios.post(`http://localhost:3000/products/details`, {
+    url,
+    company
+  });
   return response.data.data;
 }
 

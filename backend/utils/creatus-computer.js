@@ -2,10 +2,11 @@ import { parsePrice } from "./converter.js";
 import { launchBrowser } from "./puppeteer-browser.js";
 import { safeGoto } from "./safe-goto.js";
 
-export const getGlobalBrandSearchedProducts = async (page, searchKey = "", currentPage = 1) => {
+export const getCreatusComputerSearchedProducts = async (page, searchKey = "", currentPage = 1) => {
   try {
-    const url = `https://www.globalbrand.com.bd/index.php?route=product/search&search=${searchKey}&page=${currentPage}`;
-    // const url = `https://www.globalbrand.com.bd/index.php?route=product/search&search=monitor&page=1`;
+    const url = `https://www.creatus.com.bd/index.php?route=product/search&search=${searchKey}&page=${currentPage}`;
+    // const url = `https://www.creatus.com.bd/index.php?route=product/search&search=keyboard&page=1`;
+
     const success = await safeGoto(page, url);
     if (!success) return [];
 
@@ -15,9 +16,10 @@ export const getGlobalBrandSearchedProducts = async (page, searchKey = "", curre
 
       return {
         data: Array.from(productElements).map((product) => {
-          const imageTag = product.querySelector(".product-img amp-img");
-          const imageUrl = imageTag?.getAttribute("src") || "";
+          const img = product.querySelector(".image img");
+          const imageUrl = img?.getAttribute("data-src") || img?.getAttribute("src") || "";
           const title = product.querySelector(".caption .name a")?.innerText;
+          console.log(title, ":", imageUrl)
           const price = product.querySelector(".price .price-new")?.innerText || product.querySelector(".price .price-normal")?.innerText || product.querySelector(".price .price-old")?.innerText;
           const discount = product.querySelector(".product-label")?.innerText || "";
           const productDetailsLink = product.querySelector(".product-img")?.getAttribute("href").split("?")[0] || "";
@@ -29,7 +31,7 @@ export const getGlobalBrandSearchedProducts = async (page, searchKey = "", curre
             price,
             discount,
             productDetailsLink,
-            company: "GlobalBrand"
+            company: "CreatusComputerBD"
           };
         }),
       }
@@ -42,19 +44,20 @@ export const getGlobalBrandSearchedProducts = async (page, searchKey = "", curre
 
     return products.data;
   } catch (error) {
-    console.log("getGlobalBrandSearchedProducts:", error);
+    console.log("getCreatusComputerSearchedProducts:", error);
     return null;
   }
 }
 
-export const getGlobalBrandSearchedProductDetails = async (productDetailsLink) => {
+export const getCreatusComputerSearchedProductDetails = async (productDetailsLink) => {
   try {
     const browser = await launchBrowser();
     const page = await browser.newPage();
-    // const url = 'lenovo-ideapad-slim-3i-8-83em007flk-13th-gen-core-i5-laptop';
-    // const url = 'asus-proart-display-pa27ucge-4k-ultra-hd-ips-professional-monitor';
+    // const url = 'thermaltake-w1-wireless-cherry-mx-blue-gaming-keyboard';
 
-    // const productDetailsLink = `https://www.globalbrand.com.bd/${url}`
+    // const productDetailsLink = `https://www.creatus.com.bd/xinmeng-beat65-wired-8k-hz-low-latency-magnetic-switch-mechanical-keyboard`
+    // const productDetailsLink = `https://www.creatus.com.bd/fantech-atom81-mk875v2-keyboard`
+
     await safeGoto(page, productDetailsLink);
 
 
@@ -63,13 +66,13 @@ export const getGlobalBrandSearchedProductDetails = async (productDetailsLink) =
       const imageUrls = productInfo && [...productInfo.querySelectorAll(".swiper-slide img")].map(img => img.src) || [];
       const title = productInfo && productInfo.querySelector("#product .title")?.innerText?.trim()?.split("\n")?.[0] || "";
       const reviews = productInfo && productInfo.querySelector(".review-links a")?.innerText || "";
-      const id = productInfo && productInfo.querySelector("#product span")?.innerText || ""
-      const match = id.match(/Key Features of (.+?):/);
-      const productId = match ? match[1] : "";
-      const specialPrice = productInfo && productInfo.querySelector(".product-right .product-price-new")?.innerText || "";
-      const regularPrice = productInfo && productInfo.querySelector(".product-right .product-price")?.innerText || productInfo && productInfo.querySelector(".product-right .product-price-old")?.innerText || "";
+      const productId = productInfo && productInfo.querySelector(".product-sku span")?.innerText || "";
+      const specialPrice = "";
+      const regularPrice = productInfo && productInfo.querySelector(".product-right .product-price")?.innerText || ""
+      const brand = productInfo && productInfo.querySelector(".product-manufacturer a")?.innerText || "";
 
-      const specifications = document.querySelector("#tab-specification table");
+
+      const specifications = document.querySelector("#tab-specification table") || document.querySelector(".block-description table");
 
       const attributeTitles = specifications ? [...specifications.querySelectorAll("tbody tr td:first-child")].map(tag => tag?.innerText) : [];
 
@@ -85,11 +88,11 @@ export const getGlobalBrandSearchedProductDetails = async (productDetailsLink) =
         title,
         reviews,
         productId,
-        company: "GlobalBrand",
+        company: "CreatusComputerBD",
         specialPrice,
         regularPrice,
         attributes: {
-          ...Object.assign({}, ...Object.values(attributes))
+          ...Object.assign({ Brand: brand }, ...Object.values(attributes))
         },
       }
     });
@@ -106,6 +109,6 @@ export const getGlobalBrandSearchedProductDetails = async (productDetailsLink) =
 
     return { ...product, productDetailsLink };
   } catch (error) {
-    console.log("getGlobalBrandSearchedProductDetails:", error)
+    console.log("getCreatusComputerSearchedProductDetails:", error)
   }
 }

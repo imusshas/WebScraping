@@ -1,10 +1,12 @@
 import { parsePrice } from "./converter.js";
 import { launchBrowser } from "./puppeteer-browser.js";
+import { safeGoto } from "./safe-goto.js";
 
 export const getBinaryLogicSearchedProducts = async (page, searchKey = "", currentPage = 1) => {
   try {
     const url = `https://www.binarylogic.com.bd/search/${searchKey}?page=${currentPage}`;
-    await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
+    const success = await safeGoto(page, url);
+    if (!success) return [];
 
 
     const products = await page.evaluate(() => {
@@ -43,12 +45,13 @@ export const getBinaryLogicSearchedProducts = async (page, searchKey = "", curre
   }
 }
 
-export const getBinaryLogicSearchedProductDetails = async (url) => {
+export const getBinaryLogicSearchedProductDetails = async (productDetailsLink) => {
   try {
     const browser = await launchBrowser();
     const page = await browser.newPage();
+    // const productDetailsLink = `https://www.binarylogic.com.bd/${url}`
 
-    await page.goto(`https://www.binarylogic.com.bd/${url}`, { timeout: 60000, waitUntil: "domcontentloaded" });
+    await safeGoto(page, productDetailsLink);
 
 
     const product = await page.evaluate(() => {
@@ -85,7 +88,7 @@ export const getBinaryLogicSearchedProductDetails = async (url) => {
     });
 
 
-    await browser.close();
+    browser.close();
 
     const regex = product.reviews.match(/\((\d+)\)/);
     const reviewCount = regex ? parseInt(regex[1], 10) : 0;
@@ -94,7 +97,7 @@ export const getBinaryLogicSearchedProductDetails = async (url) => {
     product.regularPrice = parsePrice(product.regularPrice);
     product.specialPrice = parsePrice(product.specialPrice);
 
-    return { ...product, productDetailsLink: `https://www.binarylogic.com.bd/${url}` };
+    return { ...product, productDetailsLink };
   } catch (error) {
     console.log("getBinaryLogicSearchedProductDetails:", error)
   }

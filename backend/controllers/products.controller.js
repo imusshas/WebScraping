@@ -1,5 +1,7 @@
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { getBinaryLogicSearchedProducts } from "../utils/binary-logic.js";
+import { getCreatusComputerSearchedProducts } from "../utils/creatus-computer.js";
+import { getDiamuSearchedProducts } from "../utils/diamu.js";
 import { findProductDetails } from "../utils/find-product-details.js";
 import { getGlobalBrandSearchedProducts } from "../utils/global-brand-private.js";
 import { launchBrowser } from "../utils/puppeteer-browser.js";
@@ -14,7 +16,6 @@ import { getUltraTechSearchedProducts } from "../utils/ultra-tech.js";
 export const getSearchedProducts = async (req, res) => {
   try {
     const { searchKey, currentPage } = req.params;
-    console.log("params:", req.params);
     if (!searchKey) {
       res.status(400).json({ message: "Search key is required" })
       return;
@@ -25,12 +26,14 @@ export const getSearchedProducts = async (req, res) => {
     const sources = [
       { name: "Ryans", fn: getRyansSearchedProducts },
       { name: "StarTech", fn: getStarTechSearchedProducts },
-      { name: "TechLand", fn: getTechLandSearchedProducts },
+      { name: "TechLandBD", fn: getTechLandSearchedProducts },
       { name: "BinaryLogic", fn: getBinaryLogicSearchedProducts },
       { name: "SkyLand", fn: getSkyLandSearchedProducts },
       { name: "UCC", fn: getUCCSearchedProducts },
       { name: "GlobalBrand", fn: getGlobalBrandSearchedProducts },
       { name: "UltraTech", fn: getUltraTechSearchedProducts },
+      { name: "Diamu", fn: getDiamuSearchedProducts },
+      { name: "CreatusComputerBD", fn: getCreatusComputerSearchedProducts },
     ];
 
     const scrapePromises = sources.map(async ({ fn }) => {
@@ -39,19 +42,18 @@ export const getSearchedProducts = async (req, res) => {
         const result = await fn(page, searchKey, currentPage);
         return result;
       } finally {
-        await page.close();
+        page.close();
       }
     });
 
     const results = await Promise.allSettled(scrapePromises);
 
     const allProducts = results.reduce((acc, result) => {
-      if (result.status === "fulfilled") acc.push(...result.value);
+      if (result.status === "fulfilled" && Array.isArray(result.value)) acc.push(...result.value);
       return acc;
     }, []);
 
-    await browser.close();
-    console.log(allProducts.length)
+    browser.close();
     res.status(200).json(new ApiResponse(200, allProducts));
 
   } catch (error) {
@@ -62,7 +64,7 @@ export const getSearchedProducts = async (req, res) => {
 
 export const getSearchedProductDetails = async (req, res) => {
   try {
-    const { url, company } = req.params;
+    const { url, company } = req.body;
     if (!url) {
       return res.status(400).json({ message: "Url is required" })
     }

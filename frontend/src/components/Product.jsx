@@ -17,8 +17,8 @@ const Product = ({ imageUrl, title, price, discount, company, productDetailsLink
 	const { addProduct } = useCompareStorage();
 	const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
 	const [isAddingToCompare, setIsAddingToCompare] = useState(false);
-	const productId =
-		company === "TechLandBD" ? productDetailsLink.split("/").pop() : productDetailsLink.split("/").pop();
+	// const productId =
+	// 	company === "TechLandBD" ? productDetailsLink.split("/").pop() : productDetailsLink.split("/").pop();
 	const user = useUserStorage().getUser();
 
 	const handleAddToWishlist = async () => {
@@ -28,7 +28,7 @@ const Product = ({ imageUrl, title, price, discount, company, productDetailsLink
 		}
 		setIsAddingToWishlist(true);
 		try {
-			await addToWishlist(productId, price, company, user.email);
+			await addToWishlist(productDetailsLink, price, company, user.email);
 			updateWishlistCount(user.email);
 		} catch (error) {
 			alert(error.response?.data?.message || "Failed to add to wishlist");
@@ -39,9 +39,8 @@ const Product = ({ imageUrl, title, price, discount, company, productDetailsLink
 	const handleAddToCompare = async () => {
 		setIsAddingToCompare(true);
 		try {
-			const product = await fetchProductDetails(productId, company);
-			console.log(product);
-			addProduct({ ...product, productDetailsLink }, `${company}${productId}`);
+			const product = await fetchProductDetails(productDetailsLink, company);
+			addProduct({ ...product, productDetailsLink }, `${productDetailsLink}`);
 			updateCompareCount();
 		} catch (error) {
 			console.error("Error adding to compare:", error);

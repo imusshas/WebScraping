@@ -1,7 +1,7 @@
 export const ProductImage = ({ company, imageUrl, title }) => {
 	return (
 		<>
-			{imageUrl ? (
+			{imageUrl !== "" ? (
 				company === "BinaryLogic" ? (
 					<img
 						src={`https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}`}
@@ -11,7 +11,9 @@ export const ProductImage = ({ company, imageUrl, title }) => {
 				) : (
 					<img src={imageUrl} alt={title} className="product-img" />
 				)
-			) : <img src="" alt={title} className="product-img" />}
+			) : (
+				<img src="" alt={title} className="product-img" />
+			)}
 		</>
 	);
 };

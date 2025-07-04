@@ -1,11 +1,13 @@
 import { parsePrice } from "./converter.js";
 import { launchBrowser } from "./puppeteer-browser.js";
+import { safeGoto } from "./safe-goto.js";
 
 export const getStarTechSearchedProducts = async (page, searchKey = "", currentPage = 1) => {
   try {
 
     const url = `https://www.startech.com.bd/product/search?search=${searchKey}&page=${currentPage}`;
-    await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
+    const success = await safeGoto(page, url);
+    if (!success) return [];
 
 
     const products = await page.evaluate(() => {
@@ -31,7 +33,7 @@ export const getStarTechSearchedProducts = async (page, searchKey = "", currentP
         }),
       }
     });
-    
+
     products.data = products.data.map(p => ({
       ...p,
       price: parsePrice(p.price),
@@ -44,12 +46,13 @@ export const getStarTechSearchedProducts = async (page, searchKey = "", currentP
   }
 }
 
-export const getStarTechSearchedProductDetails = async (url) => {
+export const getStarTechSearchedProductDetails = async (productDetailsLink) => {
   try {
     const browser = await launchBrowser();
     const page = await browser.newPage();
 
-    await page.goto(`https://www.startech.com.bd/${url}`, { timeout: 60000, waitUntil: "domcontentloaded" });
+    // const productDetailsLink = `https://www.startech.com.bd/${url}`
+    await safeGoto(page, productDetailsLink);
 
 
     const product = await page.evaluate(() => {
@@ -99,7 +102,7 @@ export const getStarTechSearchedProductDetails = async (url) => {
     });
 
 
-    await browser.close();
+    browser.close();
 
     const regex = product.reviews.match(/\((\d+)\)/);
     const reviewCount = regex ? parseInt(regex[1], 10) : 0;
@@ -108,7 +111,7 @@ export const getStarTechSearchedProductDetails = async (url) => {
     product.regularPrice = parsePrice(product.regularPrice);
     product.specialPrice = parsePrice(product.specialPrice);
 
-    return { ...product, productDetailsLink: `https://www.startech.com.bd/${url}`  };
+    return { ...product, productDetailsLink };
   } catch (error) {
     console.log("getStarTechSearchedProductDetails:", error)
   }

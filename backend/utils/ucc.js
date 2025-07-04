@@ -1,11 +1,13 @@
 import { parsePrice } from "./converter.js";
 import { launchBrowser } from "./puppeteer-browser.js";
+import { safeGoto } from "./safe-goto.js";
 
 export const getUCCSearchedProducts = async (page, searchKey = "", currentPage = 1) => {
   try {
     const url = `https://www.ucc.com.bd/index.php?route=product/search&search=${searchKey}&page=${currentPage}`;
     // const url = `https://www.ucc.com.bd/index.php?route=product/search&search=keyboard&page=2`;
-    await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
+    const success = await safeGoto(page, url);
+    if (!success) return [];
 
 
     const products = await page.evaluate(() => {
@@ -44,13 +46,14 @@ export const getUCCSearchedProducts = async (page, searchKey = "", currentPage =
   }
 }
 
-export const getUCCSearchedProductDetails = async (url) => {
+export const getUCCSearchedProductDetails = async (productDetailsLink) => {
   try {
     const browser = await launchBrowser();
     const page = await browser.newPage();
     // const url = 'thermaltake-w1-wireless-cherry-mx-blue-gaming-keyboard';
 
-    await page.goto(`https://www.ucc.com.bd/${url}`, { timeout: 60000, waitUntil: "domcontentloaded" });
+    // const productDetailsLink = `https://www.ucc.com.bd/${url}`
+    await safeGoto(page, productDetailsLink);
 
 
     const product = await page.evaluate(() => {
@@ -90,7 +93,7 @@ export const getUCCSearchedProductDetails = async (url) => {
     });
 
 
-    await browser.close();
+    browser.close();
 
     const regex = product.reviews.match(/\((\d+)\)/);
     const reviewCount = regex ? parseInt(regex[1], 10) : 0;
@@ -99,8 +102,8 @@ export const getUCCSearchedProductDetails = async (url) => {
     product.regularPrice = parsePrice(product.regularPrice);
     product.specialPrice = parsePrice(product.specialPrice);
 
-    return { ...product, productDetailsLink: `https://www.ucc.com.bd/${url}` };
+    return { ...product, productDetailsLink };
   } catch (error) {
-    console.log("getSkyLandSearchedProductDetails:", error)
+    console.log("getUCCSearchedProductDetails:", error)
   }
 }

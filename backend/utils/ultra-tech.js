@@ -1,11 +1,13 @@
 import { parsePrice } from "./converter.js";
 import { launchBrowser } from "./puppeteer-browser.js";
+import { safeGoto } from "./safe-goto.js";
 
 export const getUltraTechSearchedProducts = async (page, searchKey = "", currentPage = 1) => {
   try {
     // const url = `https://www.ultratech.com.bd/index.php?route=product/search&search=monitor&page=2`;
     const url = `https://www.ultratech.com.bd/index.php?route=product/search&search=${searchKey}&page=${currentPage}`;
-    await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
+    const success = await safeGoto(page, url);
+    if (!success) return [];
 
 
     const products = await page.evaluate(() => {
@@ -44,14 +46,14 @@ export const getUltraTechSearchedProducts = async (page, searchKey = "", current
   }
 }
 
-export const getUltraTechSearchedProductDetails = async (url) => {
+export const getUltraTechSearchedProductDetails = async (productDetailsLink) => {
   try {
     const browser = await launchBrowser();
     const page = await browser.newPage();
     // const url = 'esonic-22elmw-21-5-inch-hd-led-monitor';
-    const productDetailsLink = `https://www.ultratech.com.bd/${url}`
 
-    await page.goto(productDetailsLink, { timeout: 60000, waitUntil: "domcontentloaded" });
+    // const productDetailsLink = `https://www.ultratech.com.bd/${url}`
+    await safeGoto(page, productDetailsLink);
 
 
     const product = await page.evaluate(() => {
@@ -89,7 +91,7 @@ export const getUltraTechSearchedProductDetails = async (url) => {
     });
 
 
-    await browser.close();
+    browser.close();
 
     const regex = product.reviews.match(/\((\d+)\)/);
     const reviewCount = regex ? parseInt(regex[1], 10) : 0;

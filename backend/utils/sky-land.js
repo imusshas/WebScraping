@@ -1,10 +1,12 @@
 import { parsePrice } from "./converter.js";
 import { launchBrowser } from "./puppeteer-browser.js";
+import { safeGoto } from "./safe-goto.js";
 
 export const getSkyLandSearchedProducts = async (page, searchKey = "", currentPage = 1) => {
   try {
     const url = `https://www.skyland.com.bd/index.php?route=product/search&search=${searchKey}&page=${currentPage}`;
-    await page.goto(url, { timeout: 60000, waitUntil: "domcontentloaded" });
+    const success = await safeGoto(page, url);
+    if (!success) return [];
 
 
     const products = await page.evaluate(() => {
@@ -43,7 +45,7 @@ export const getSkyLandSearchedProducts = async (page, searchKey = "", currentPa
   }
 }
 
-export const getSkyLandSearchedProductDetails = async (url) => {
+export const getSkyLandSearchedProductDetails = async (productDetailsLink) => {
   try {
     const browser = await launchBrowser();
     const page = await browser.newPage();
@@ -52,7 +54,8 @@ export const getSkyLandSearchedProductDetails = async (url) => {
     // const url = 'casio-ct-s100-casiotone-portable-keyboard';
     // const url = 'corsair-k100-air-gaming-keyboard';
 
-    await page.goto(`https://www.skyland.com.bd/${url}`, { timeout: 60000, waitUntil: "domcontentloaded" });
+    // const productDetailsLink = `https://www.skyland.com.bd/${url}`
+    await safeGoto(page, productDetailsLink);
 
 
     const product = await page.evaluate(() => {
@@ -94,7 +97,7 @@ export const getSkyLandSearchedProductDetails = async (url) => {
     });
 
 
-    await browser.close();
+    browser.close();
 
     const regex = product.reviews.match(/\((\d+)\)/);
     const reviewCount = regex ? parseInt(regex[1], 10) : 0;
@@ -103,7 +106,7 @@ export const getSkyLandSearchedProductDetails = async (url) => {
     product.regularPrice = parsePrice(product.regularPrice);
     product.specialPrice = parsePrice(product.specialPrice);
 
-    return { ...product, productDetailsLink: `https://www.skyland.com.bd/${url}` };
+    return { ...product, productDetailsLink };
   } catch (error) {
     console.log("getSkyLandSearchedProductDetails:", error)
   }

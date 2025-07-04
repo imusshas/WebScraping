@@ -27,16 +27,16 @@ const ProductList = () => {
 
 	useEffect(() => {
 		setLoading(true);
-		fetchProducts(searchKey, currentPage)
+		fetchProducts(searchKey, page)
 			.then((response) => {
 				setAllProducts(response || []);
 			})
 			.finally(() => {
 				setLoading(false);
 			});
-	}, [searchKey, currentPage]);
+	}, [searchKey, page]);
 
-	const paginatedProducts = useMemo(() => {
+	const filteredAndSortedProducts = useMemo(() => {
 		const filtered = allProducts.filter((p) => {
 			const isStock = typeof p.price === "number";
 			if (stockFilter === "in") return isStock;
@@ -82,13 +82,6 @@ const ProductList = () => {
 							</div>
 						))}
 					</section>
-				</>
-			) : paginatedProducts.length === 0 ? (
-				<>
-					<p className="empty-product-img">No product left</p>
-					<div className="pagination">
-						<Button onClick={() => navigate(`/`)}>Go Home</Button>
-					</div>
 				</>
 			) : (
 				<>
@@ -140,15 +133,25 @@ const ProductList = () => {
 						</Button>
 					</div>
 					<section className="product-list">
-						{paginatedProducts.map((product) => (
-							<Product key={product.productDetailsLink} {...product} setShowLogin={setShowLogin} />
-						))}
+						{filteredAndSortedProducts.length === 0 ? (
+							<p>No product left</p>
+						) : (
+							filteredAndSortedProducts.map((product) => (
+								<Product key={product.productDetailsLink} {...product} setShowLogin={setShowLogin} />
+							))
+						)}
 					</section>
 					<div className="pagination">
 						<Button onClick={() => handlePageChange(page - 1)} disabled={page <= 1}>
 							Previous
 						</Button>
-						<Button onClick={() => handlePageChange(page + 1)}>Next</Button>
+						<Button
+							onClick={() => {
+								handlePageChange(page + 1);
+							}}
+						>
+							Next
+						</Button>
 					</div>
 				</>
 			)}
