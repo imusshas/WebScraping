@@ -1,23 +1,21 @@
 import { Link, useLocation, useNavigate } from "react-router";
 import { Button } from "../ui/Button";
-import { logout } from "../../utils/actions";
 import { useWishlist } from "../../context/WishlistContext";
 import { useCompare } from "../../context/CompareContext";
-import { useUserStorage } from "../../hooks/useUserStorage";
 import SearchInput from "../ui/SearchInput";
+import { useAuth } from "../../context/AuthContext";
 
-const Header = ({ setShowLogin, user }) => {
+const Header = () => {
 	const navigate = useNavigate();
 	const { wishlistCount, clearWishlistCount } = useWishlist();
 	const { compareCount } = useCompare();
-	const { removeUser } = useUserStorage();
+	const { user, logout } = useAuth();
 	const location = useLocation();
 
 	async function handleLogout() {
-		const info = await logout();
-		if (info.statusCode === 200) {
-			removeUser();
-			clearWishlistCount();
+		await logout();
+		clearWishlistCount();
+		if (location.pathname === "/wishlist") {
 			navigate("/");
 		}
 	}
@@ -91,8 +89,13 @@ const Header = ({ setShowLogin, user }) => {
 						Logout
 					</Button>
 				) : (
-					<Button className="login-btn" onClick={() => setShowLogin(true)}>
-						Login/Register
+					<Button
+						className="login-btn"
+						onClick={() => {
+							navigate("/login");
+						}}
+					>
+						Login
 					</Button>
 				)}
 			</nav>

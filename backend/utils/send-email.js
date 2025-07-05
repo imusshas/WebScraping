@@ -25,6 +25,25 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+export async function sendVerificationEmail(email, verifyUrl) {
+  const mailOptions = {
+    from: 'crackerroot4@gmail.com',
+    to: email,
+    subject: "Verify your email",
+    html: `
+    <p>Thanks for signing up!</p>
+    <p>Click <a href="${verifyUrl}">here</a> to verify your email.</p>
+  `,
+  };
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log('Error:', error);
+    } else {
+      console.log('Email sent:', info.response);
+    }
+  });
+}
+
 
 
 export async function checkWishlistAndSendEmail() {

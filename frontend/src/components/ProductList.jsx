@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams, useOutletContext } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import Skeleton from "react-loading-skeleton";
 import Product from "./Product";
 import { Button } from "../components/ui/Button";
@@ -12,7 +12,6 @@ import { useCompareStorage } from "../hooks/useCompareStorage";
 import { useCompare } from "../context/CompareContext";
 
 const ProductList = () => {
-	const { setShowLogin } = useOutletContext();
 	const { clearAll } = useCompareStorage();
 	const { compareCount, updateCompareCount } = useCompare();
 	const navigate = useNavigate();
@@ -137,7 +136,7 @@ const ProductList = () => {
 							<p>No product left</p>
 						) : (
 							filteredAndSortedProducts.map((product) => (
-								<Product key={product.productDetailsLink} {...product} setShowLogin={setShowLogin} />
+								<Product key={product.productDetailsLink} {...product} />
 							))
 						)}
 					</section>

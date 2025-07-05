@@ -2,42 +2,44 @@ import { useCompareStorage } from "../hooks/useCompareStorage";
 import { Button } from "./ui/Button";
 import { comparisonTable } from "../utils/comparisonTable";
 import { useEffect, useState } from "react";
-import { useNavigate, useOutletContext } from "react-router";
+import { useNavigate } from "react-router";
 import { useCompare } from "../context/CompareContext";
 import { CompanyLogo } from "./CompanyLogo";
 import { ProductImage } from "./ProductImage";
-import { useUserStorage } from "../hooks/useUserStorage";
 import { addToWishlist } from "../utils/actions";
 import { useWishlist } from "../context/WishlistContext";
+import { useAuth } from "../context/AuthContext";
 
 const CompareProducts = () => {
 	const navigate = useNavigate();
 	const { getProducts, removeProduct, clearAll } = useCompareStorage();
 	const { updateCompareCount } = useCompare();
 	const [products, setProducts] = useState([]);
-	const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+	const [loadingProductKey, setLoadingProductKey] = useState(null);
 	const comparableAttributes = comparisonTable(products);
 	const { updateWishlistCount } = useWishlist();
-	const { setShowLogin } = useOutletContext();
-	const user = useUserStorage().getUser();
+	const { user } = useAuth();
 
 	useEffect(() => {
 		setProducts(getProducts());
 	}, [getProducts]);
 
-	const handleAddToWishlist = async (productDetailsLink, price, company) => {
+	const handleAddToWishlist = async (productDetailsLink, price, company, key) => {
 		if (!user) {
-			setShowLogin(true);
+			navigate("/login");
 			return;
 		}
-		setIsAddingToWishlist(true);
+
+		setLoadingProductKey(key);
+
 		try {
 			await addToWishlist(productDetailsLink, price, company, user.email);
-			updateWishlistCount(user.email);
+			await updateWishlistCount(user.email);
 		} catch (error) {
 			alert(error.response?.data?.message || "Failed to add to wishlist");
+		} finally {
+			setLoadingProductKey(null);
 		}
-		setIsAddingToWishlist(false);
 	};
 
 	if (products.length === 0)
@@ -69,7 +71,7 @@ const CompareProducts = () => {
 								</Button>
 							</div>
 						</th>
-						{products.map((product, index) => (
+						{products.map((product) => (
 							<th key={product.key}>
 								<a href={product.productDetailsLink} target="_blank">
 									<div className="compared-product">
@@ -79,7 +81,6 @@ const CompareProducts = () => {
 										</span>
 										<ProductImage title={product.title} imageUrl={product.imageUrls[0]} company={product.company} />
 										<div className="compared-product-content">
-											{/* Change the color */}
 											{product.specialPrice !== "Out Of Stock" ? (
 												<p className="special-price">Special Price: {product.specialPrice}৳</p>
 											) : (
@@ -87,7 +88,6 @@ const CompareProducts = () => {
 											)}
 											<p>Regular Price: {product.regularPrice}৳</p>
 											<h2>{product.title}</h2>
-											{/* <p>Product Id: {product.productId}</p> */}
 										</div>
 										<Button
 											className="close-modal-btn"
@@ -117,18 +117,15 @@ const CompareProducts = () => {
 											</svg>
 										</Button>
 										<Button
-											onClick={async () => {
-												const { company, productDetailsLink, specialPrice, regularPrice } = product;
-												// const productId =
-												// 	company === "TechLandBD"
-												// 		? productDetailsLink.split("/").pop()
-												// 		: productDetailsLink.split("/").pop();
-												handleAddToWishlist(productDetailsLink, specialPrice || regularPrice, company);
+											onClick={() => {
+												handleAddToWishlist(
+													product.productDetailsLink,
+													isNaN(!product.specialPrice) ? product.specialPrice : product.regularPrice,
+													product.company,
+													product.key
+												);
 											}}
-											disabled={
-												(isAddingToWishlist && product.productDetailsLink === products[index].productDetailsLink) ||
-												product.regularPrice === "Out Of Stock"
-											}
+											disabled={loadingProductKey === product.key || product.regularPrice === "Out Of Stock"}
 										>
 											Add To Wishlist
 										</Button>

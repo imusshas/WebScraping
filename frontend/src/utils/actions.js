@@ -15,8 +15,18 @@ export async function fetchProductDetails(url, company) {
   return response.data.data;
 }
 
-export async function isAuthenticated() {
-  const response = await axios.get(`http://localhost:3000/auth/check-auth`, { withCredentials: true });
+export async function signup(email, password) {
+  const response = await axios.post(`http://localhost:3000/auth/signup`, { email, password }, { withCredentials: true });
+  return response.data.data
+}
+
+export async function verifyEmail(token) {
+  const response = await axios.get(`http://localhost:3000/auth/verify-email?token=${token}`, { withCredentials: true });
+  return response.data.data
+}
+
+export async function resendVerificationEmail() {
+  const response = await axios.post(`http://localhost:3000/auth/resend-verification`, { withCredentials: true });
   return response.data.data
 }
 
@@ -39,7 +49,7 @@ export async function getCurrentUser() {
   }
 }
 
-export async function logout() {
+export async function logoutFromDB() {
   const response = await axios.get(`http://localhost:3000/auth/logout`, { withCredentials: true });
   return response.data;
 }

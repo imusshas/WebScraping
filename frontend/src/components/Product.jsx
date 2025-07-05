@@ -1,29 +1,28 @@
 // frontend/src/components/Product.jsx
 
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "./ui/Button";
 import { useWishlist } from "../context/WishlistContext";
 import { useCompare } from "../context/CompareContext";
 import { useCompareStorage } from "../hooks/useCompareStorage";
 import { addToWishlist, fetchProductDetails } from "../utils/actions";
 import { useState } from "react";
-import { useUserStorage } from "../hooks/useUserStorage";
 import { CompanyLogo } from "./CompanyLogo";
 import { ProductImage } from "./ProductImage";
+import { useAuth } from "../context/AuthContext";
 
-const Product = ({ imageUrl, title, price, discount, company, productDetailsLink, setShowLogin }) => {
+const Product = ({ imageUrl, title, price, discount, company, productDetailsLink }) => {
+	const navigate = useNavigate();
 	const { updateWishlistCount } = useWishlist();
 	const { updateCompareCount } = useCompare();
 	const { addProduct } = useCompareStorage();
 	const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
 	const [isAddingToCompare, setIsAddingToCompare] = useState(false);
-	// const productId =
-	// 	company === "TechLandBD" ? productDetailsLink.split("/").pop() : productDetailsLink.split("/").pop();
-	const user = useUserStorage().getUser();
+	const { user } = useAuth();
 
 	const handleAddToWishlist = async () => {
 		if (!user) {
-			setShowLogin(true);
+			navigate("/login");
 			return;
 		}
 		setIsAddingToWishlist(true);
