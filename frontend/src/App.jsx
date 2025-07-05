@@ -23,7 +23,7 @@ function AuthWrapper() {
 		return <Spinner />;
 	}
 
-	// TODO: refresh-session, price-filter, pagination
+	// TODO: price-filter, pagination
 
 	return (
 		<WishlistProvider user={user}>

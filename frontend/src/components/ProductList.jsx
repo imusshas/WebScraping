@@ -11,6 +11,9 @@ import { SortIcon } from "./ui/SortIcon";
 import { useCompareStorage } from "../hooks/useCompareStorage";
 import { useCompare } from "../context/CompareContext";
 
+import "rc-slider/assets/index.css";
+import Slider from "rc-slider";
+
 const ProductList = () => {
 	const { clearAll } = useCompareStorage();
 	const { compareCount, updateCompareCount } = useCompare();
@@ -19,6 +22,7 @@ const ProductList = () => {
 	const [loading, setLoading] = useState(true);
 	const [sortAsc, setSortAsc] = useState(true);
 	const [stockFilter, setStockFilter] = useState("all");
+	const [selectedPriceRange, setSelectedPriceRange] = useState([0, 1000000]); // Default range
 	const sortButtonText = sortAsc ? "Low To High" : "High To Low";
 
 	const { searchKey, currentPage } = useParams();
@@ -29,6 +33,11 @@ const ProductList = () => {
 		fetchProducts(searchKey, page)
 			.then((response) => {
 				setAllProducts(response || []);
+				const prices = (response || []).map((p) => p.price).filter((p) => typeof p === "number");
+
+				const min = Math.min(...prices);
+				const max = Math.max(...prices);
+				setSelectedPriceRange([min, max]);
 			})
 			.finally(() => {
 				setLoading(false);
@@ -38,8 +47,15 @@ const ProductList = () => {
 	const filteredAndSortedProducts = useMemo(() => {
 		const filtered = allProducts.filter((p) => {
 			const isStock = typeof p.price === "number";
-			if (stockFilter === "in") return isStock;
-			if (stockFilter === "out") return !isStock;
+			if (stockFilter === "in" && !isStock) return false;
+			if (stockFilter === "out" && isStock) return false;
+
+			// Price range filter
+			if (isStock) {
+				const [min, max] = selectedPriceRange;
+				if (p.price < min || p.price > max) return false;
+			}
+
 			return true;
 		});
 
@@ -55,7 +71,7 @@ const ProductList = () => {
 		});
 
 		return sorted;
-	}, [allProducts, sortAsc, stockFilter]);
+	}, [allProducts, sortAsc, stockFilter, selectedPriceRange]);
 
 	const handlePageChange = (newPage) => {
 		navigate(`/products/${searchKey}/${newPage}`);
@@ -117,6 +133,21 @@ const ProductList = () => {
 								Out of Stock
 							</label>
 						</div>
+						<div className="price-filter">
+							<p>
+								Price Range: {selectedPriceRange[0]}৳ - {selectedPriceRange[1]}৳
+							</p>
+							<Slider
+								range
+								min={selectedPriceRange[0]}
+								max={selectedPriceRange[1]}
+								value={selectedPriceRange}
+								onChange={setSelectedPriceRange}
+								allowCross={false}
+								pushable
+								className="price-slider"
+							/>
+						</div>
 						<Button className="sort-btn" onClick={() => setSortAsc(!sortAsc)}>
 							Price: {sortButtonText}
 							<SortIcon />
@@ -135,9 +166,7 @@ const ProductList = () => {
 						{filteredAndSortedProducts.length === 0 ? (
 							<p>No product left</p>
 						) : (
-							filteredAndSortedProducts.map((product) => (
-								<Product key={product.productDetailsLink} {...product} />
-							))
+							filteredAndSortedProducts.map((product) => <Product key={product.productDetailsLink} {...product} />)
 						)}
 					</section>
 					<div className="pagination">
