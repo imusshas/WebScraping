@@ -24,33 +24,57 @@ const ProductList = () => {
 	const [stockFilter, setStockFilter] = useState("all");
 	const [selectedPriceRange, setSelectedPriceRange] = useState([0, 1000000]); // Default range
 	const [productsPerPage, setProductsPerPage] = useState(20);
-	const [offsetIndex, setOffsetIndex] = useState(0);
 	const sortButtonText = sortAsc ? "Low To High" : "High To Low";
+	const [visitedNext, setVisitedNext] = useState(false);
 
 	const fetchedScraperPagesRef = useRef(new Set());
 
 	const { searchKey, currentPage } = useParams();
 	const page = Number(currentPage);
 
+	const lastSearchKeyRef = useRef(searchKey);
+	const offsetIndex = useMemo(() => (page - 1) * productsPerPage, [page, productsPerPage]);
+
 	useEffect(() => {
+		// Reset all when search key changes
+		if (lastSearchKeyRef.current !== searchKey) {
+			console.log("searchKey does not match");
+			lastSearchKeyRef.current = searchKey;
+			setAllProducts([]);
+			setStockFilter("all");
+			setSelectedPriceRange([0, 1000000]);
+			setProductsPerPage(20);
+			fetchedScraperPagesRef.current = new Set();
+			navigate(`/products/${searchKey}/1`, { replace: true });
+			return;
+		}
+
+		// Load first page normally
 		if (page === 1 && allProducts.length === 0) {
 			setLoading(true);
 			fetchProducts(searchKey, page)
 				.then((response) => {
 					setAllProducts(response || []);
 					const prices = (response || []).map((p) => p.price).filter((p) => typeof p === "number");
+					if (prices.length > 0) {
+						const min = Math.min(...prices);
+						const max = Math.max(...prices);
+						setSelectedPriceRange([min, max]);
+					}
 
-					const min = Math.min(...prices);
-					const max = Math.max(...prices);
-					setSelectedPriceRange([min, max]);
+					fetchedScraperPagesRef.current.add(1);
 				})
-				.finally(() => {
-					setLoading(false);
-				});
-		} else if (allProducts.length <= 100_000 && !fetchedScraperPagesRef.current.has(page)) {
+				.finally(() => setLoading(false));
+			return;
+		}
+
+		// Fetch page in background if not already fetched
+		if (!fetchedScraperPagesRef.current.has(page)) {
 			fetchProducts(searchKey, page).then((products) => {
-				Array.isArray(products) && setAllProducts((prev) => [...prev, ...products]);
-				fetchedScraperPagesRef.current.add(page);
+				if (Array.isArray(products)) {
+					setAllProducts((prev) => [...prev, ...products]);
+					fetchedScraperPagesRef.current.add(page);
+				}
 			});
 		}
 	}, [searchKey, page]);
@@ -60,46 +84,80 @@ const ProductList = () => {
 			setLoading(true);
 			const timeout = setTimeout(() => setLoading(false), 3000);
 			return () => clearTimeout(timeout);
+		} else if (visitedNext && page === 1) {
+			setLoading(true);
+			const timeout = setTimeout(() => setLoading(false), 3000);
+			return () => clearTimeout(timeout);
 		}
-	}, [page]);
+	}, [page, visitedNext]);
 
-	const filteredAndSortedProducts = useMemo(() => {
-		const paginated = allProducts.slice(offsetIndex, Math.min(allProducts.length, offsetIndex + productsPerPage));
-		const filtered = paginated.filter((p) => {
+	const currentVisibleProducts = useMemo(() => {
+		const paginated = allProducts.slice(offsetIndex, offsetIndex + productsPerPage);
+
+		return paginated.filter((p) => {
 			const isStock = typeof p.price === "number";
-			if (stockFilter === "in" && !isStock) return false;
-			if (stockFilter === "out" && isStock) return false;
+			if (stockFilter === "in") return isStock;
+			if (stockFilter === "out") return !isStock;
+			return true; // stockFilter === "all"
+		});
+	}, [allProducts, offsetIndex, productsPerPage, stockFilter]);
 
-			// Price range filter
-			if (isStock) {
-				const [min, max] = selectedPriceRange;
-				if (p.price < min || p.price > max) return false;
+	const priceBounds = useMemo(() => {
+		const prices = currentVisibleProducts.map((p) => p.price).filter((p) => typeof p === "number");
+
+		if (prices.length === 0) return [0, 0];
+
+		const min = Math.min(...prices);
+		const max = Math.max(...prices);
+
+		// Clamp selected range to new bounds if needed
+		if (selectedPriceRange[0] < min || selectedPriceRange[1] > max) {
+			setSelectedPriceRange([min, max]);
+		}
+
+		return [min, max];
+	}, [currentVisibleProducts, selectedPriceRange]);
+
+	const products = useMemo(() => {
+		const filtered = currentVisibleProducts.filter((p) => {
+			const isStock = typeof p.price === "number";
+			const [min, max] = selectedPriceRange;
+
+			if (stockFilter === "in") {
+				// Show only in-stock within price range
+				return isStock && p.price >= min && p.price <= max;
 			}
 
-			return true;
+			if (stockFilter === "out") {
+				// Show only out-of-stock (price missing or not a number)
+				return !isStock;
+			}
+
+			// For 'all': show in-stock within range, plus out-of-stock always
+			if (stockFilter === "all") {
+				return (isStock && p.price >= min && p.price <= max) || !isStock;
+			}
+
+			return false;
 		});
 
 		const sorted = [...filtered].sort((a, b) => {
-			const isAStock = typeof a.price === "number";
-			const isBStock = typeof b.price === "number";
+			const aStock = typeof a.price === "number";
+			const bStock = typeof b.price === "number";
 
-			if (!isAStock && isBStock) return 1;
-			if (isAStock && !isBStock) return -1;
-			if (!isAStock && !isBStock) return 0;
+			// Always push out-of-stock items to the bottom
+			if (!aStock && bStock) return 1;
+			if (aStock && !bStock) return -1;
 
+			// Sort by price if both are in stock
 			return sortAsc ? a.price - b.price : b.price - a.price;
 		});
 
 		return sorted;
-	}, [allProducts, sortAsc, stockFilter, selectedPriceRange, offsetIndex, productsPerPage]);
+	}, [currentVisibleProducts, selectedPriceRange, stockFilter, sortAsc]);
 
 	const handlePageChange = (newPage) => {
-		setLoading(true);
-		if (newPage > page) {
-			setOffsetIndex((prev) => prev + productsPerPage);
-		} else if (newPage < page) {
-			setOffsetIndex((prev) => prev - productsPerPage);
-		}
+		if (newPage < 1 || offsetIndex + productsPerPage > allProducts.length) return;
 		navigate(`/products/${searchKey}/${newPage}`);
 	};
 
@@ -165,8 +223,8 @@ const ProductList = () => {
 							</p>
 							<Slider
 								range
-								min={selectedPriceRange[0]}
-								max={selectedPriceRange[1]}
+								min={priceBounds[0]}
+								max={priceBounds[1]}
 								value={selectedPriceRange}
 								onChange={setSelectedPriceRange}
 								allowCross={false}
@@ -213,10 +271,10 @@ const ProductList = () => {
 						</Button>
 					</div>
 					<section className="product-list">
-						{filteredAndSortedProducts.length === 0 ? (
+						{products.length === 0 ? (
 							<p>No product left</p>
 						) : (
-							filteredAndSortedProducts.map((product) => <Product key={product.productDetailsLink} {...product} />)
+							products.map((product) => <Product key={product.productDetailsLink} {...product} />)
 						)}
 					</section>
 					<div className="pagination">
@@ -226,6 +284,7 @@ const ProductList = () => {
 						<Button
 							onClick={() => {
 								handlePageChange(page + 1);
+								setVisitedNext(true);
 							}}
 							disabled={offsetIndex + productsPerPage >= allProducts.length}
 						>
