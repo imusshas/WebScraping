@@ -38,7 +38,7 @@ const ProductList = () => {
 	useEffect(() => {
 		// Reset all when search key changes
 		if (lastSearchKeyRef.current !== searchKey) {
-			console.log("searchKey does not match");
+			// console.log("searchKey does not match");
 			lastSearchKeyRef.current = searchKey;
 			setAllProducts([]);
 			setStockFilter("all");
@@ -46,26 +46,6 @@ const ProductList = () => {
 			setProductsPerPage(20);
 			fetchedScraperPagesRef.current = new Set();
 			navigate(`/products/${searchKey}/1`, { replace: true });
-			return;
-		}
-
-		// Load first page normally
-		if (page === 1 && allProducts.length === 0) {
-			setLoading(true);
-			fetchProducts(searchKey, page)
-				.then((response) => {
-					setAllProducts(response || []);
-					const prices = (response || []).map((p) => p.price).filter((p) => typeof p === "number");
-					if (prices.length > 0) {
-						const min = Math.min(...prices);
-						const max = Math.max(...prices);
-						setSelectedPriceRange([min, max]);
-					}
-
-					fetchedScraperPagesRef.current.add(1);
-				})
-				.finally(() => setLoading(false));
-			return;
 		}
 
 		// Fetch page in background if not already fetched
@@ -76,6 +56,22 @@ const ProductList = () => {
 					fetchedScraperPagesRef.current.add(page);
 				}
 			});
+
+			if (page === 1) {
+				setLoading(true);
+				fetchProducts(searchKey, page)
+					.then((response) => {
+						setAllProducts(response || []);
+						const prices = (response || []).map((p) => p.price).filter((p) => typeof p === "number");
+						if (prices.length > 0) {
+							const min = Math.min(...prices);
+							const max = Math.max(...prices);
+							setSelectedPriceRange([min, max]);
+						}
+					})
+					.finally(() => setLoading(false));
+				return;
+			}
 		}
 	}, [searchKey, page]);
 
