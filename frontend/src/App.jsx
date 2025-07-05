@@ -23,8 +23,6 @@ function AuthWrapper() {
 		return <Spinner />;
 	}
 
-	// TODO: price-filter, pagination
-
 	return (
 		<WishlistProvider user={user}>
 			<CompareProvider>
